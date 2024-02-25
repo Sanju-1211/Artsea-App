@@ -105,7 +105,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Alert } from 'react-native';
 import CartItem from '../components/CartItem';
 import firebase from 'firebase/compat';
 import AppButton from '../components/AppButton';
@@ -113,10 +113,85 @@ import AddressForm from '../components/AddressForm';
 import AppText from '../components/AppText';
 import Screen from '../components/Screen';
 import { ScrollView } from 'react-native-gesture-handler';
+import { StripeProvider, usePaymentSheet } from "@stripe/stripe-react-native";
+import { useFocusEffect } from '@react-navigation/native';
+
+// STRIPE
+// const API_URL = "http://192.168.1.4:3000";
+// // const PUBLISHABLE_KEY =
+// //   "pk_test_51MY8orSJTJQgHNK3rd2vWgnaOUuCxL1kDycYjfiS0rDECssrhOyVyrQZJ6u3G0bAW9AqdHnzWKIErdTyU8FKmyJN00b2iCtrnI";
+// const PUBLISHABLE_KEY = "pk_live_51MY8orSJTJQgHNK3doioI6IIGFnZI2SnsDg4ckp89cj9JjBPRGSge5HSgAMPJB5nhUHKAF9hwm115RcJCrn9JFCa0017TczqfA"
 
 const CheckoutScreen = () => {
   const [cartItems, setCartItems] = useState([]);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [cartTotal, setCartTotal] = useState(0)
+
+  // Stripe
+  // const [ready, setReady] = useState(false);
+  // const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
+  // async function fetchPaymentSheetParams() {
+  //   const response = await fetch(`${API_URL}/create-payment-intent`, {
+  //     method: "POST",
+  //     body: JSON.stringify({
+  //       totalPrice: cartTotal,
+  //     }),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //   });
+
+  //   const { paymentIntent, ephemeralKey, customer } = await response.json();
+
+  //   return {
+  //     paymentIntent,
+  //     ephemeralKey,
+  //     customer,
+  //   };
+  // }
+  // async function initialisePaymentSheet() {
+  //   console.log("Initialising Payment Sheet")
+  //   const { paymentIntent, ephemeralKey, customer, publishableKey } =
+  //     await fetchPaymentSheetParams();
+  //   const paymentSheet = await initPaymentSheet({
+  //     merchantDisplayName: "Artsea, Inc.",
+  //     customerId: customer,
+  //     customerEphemeralKeySecret: ephemeralKey,
+  //     paymentIntentClientSecret: paymentIntent,
+  //     allowsDelayedPaymentMethods: true,
+  //     defaultBillingDetails: {
+  //       name: "Rishabh Chopra",
+  //     },
+  //     googlePay:{
+  //       merchantCountryCode:"IN",
+  //       testEnv:true,
+  //       currencyCode:"inr"
+  //     },
+  //     returnURL:"stripe-example://stripe-redirect",
+  //   });
+  //   if (paymentSheet.error) {
+  //     Alert.alert(`Error code: ${error.code}, ${error.message}`);
+  //   } else {
+  //     console.log("Payment Sheet Initialised");
+  //     setReady(true);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   initialisePaymentSheet();
+  // }, [cartTotal]);
+
+  // async function openPaymentSheet() {
+  //   console.log("Open Payment Sheet");
+  //   const { error } = await presentPaymentSheet();
+
+  //   if (error) {
+  //     Alert.alert(`Error code: ${error.code}`, error.message);
+  //   } else {
+  //     Alert.alert("Success", "Your reservation is confirmed!");
+  //     setReady(false);
+  //   }
+  // }
 
   useEffect(() => {
     const user = firebase.auth().currentUser;
@@ -272,35 +347,20 @@ const CheckoutScreen = () => {
 
   const calculateTotals = (items) => {
     const cartTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const platformFee = 20; // Flat fee for example
-    const shippingFee = cartTotal > 500 ? 0 : 50; // Free shipping for orders over ₹500
-    const discount = cartTotal * 0.1; // 10% discount for example
-  
-    return {
-      cartTotal,
-      platformFee,
-      shippingFee,
-      discount,
-      finalTotal: cartTotal + platformFee + shippingFee - discount,
-    };
+    return cartTotal
   };
-
-  const [totals, setTotals] = useState({
-    cartTotal: 0,
-    platformFee: 0,
-    shippingFee: 0,
-    discount: 0,
-    finalTotal: 0,
-  });
   
   useEffect(() => {
-    const newTotals = calculateTotals(cartItems);
-    setTotals(newTotals);
+    const newTotal = calculateTotals(cartItems);
+    setCartTotal(newTotal)
   }, [cartItems]);
 
+
   return (
+    // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
     <Screen style={styles.container}>
     <ScrollView style={styles.container}>
+      <AppText>Ready: {JSON.stringify(ready)}</AppText>
       <AddressForm onSave={saveAddressToFirestore} />
       
       <FlatList
@@ -315,15 +375,12 @@ const CheckoutScreen = () => {
         )}
       />
       <View style={styles.orderSummary}>
-      <AppText>Cart Total: {totals.cartTotal}</AppText>
-      <AppText>Platform Fee: {totals.platformFee}</AppText>
-      <AppText>Shipping Fee: {totals.shippingFee}</AppText>
-      <AppText>Discount: -{totals.discount}</AppText>
-      <AppText>Final Total: {totals.finalTotal}</AppText>
+      <AppText>Cart Total: {cartTotal}</AppText>
     </View>
       <AppButton text="Place Order" onPress={placeOrder} style={{padding: 16}}/>
     </ScrollView>
     </Screen>
+    // </StripeProvider>
   );
 };
 
