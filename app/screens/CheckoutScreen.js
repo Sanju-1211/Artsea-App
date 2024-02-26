@@ -116,6 +116,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { StripeProvider, usePaymentSheet } from "@stripe/stripe-react-native";
 import { useFocusEffect } from '@react-navigation/native';
 import Loading from '../components/Loading';
+import RowView from '../components/RowView';
+import colors from '../config/colors';
 
 // STRIPE
 // const API_URL = "http://192.168.1.4:3000";
@@ -316,6 +318,7 @@ const CheckoutScreen = () => {
   
         // Update local state to clear the displayed cart
         setCartItems([]);
+        setCartTotal(0)
   
         // Optionally, set orderPlaced to true if you're using it to show a confirmation screen
         setOrderPlaced(true);
@@ -337,9 +340,10 @@ const CheckoutScreen = () => {
       const unsubscribe = userRef.onSnapshot(doc => {
         if (doc.exists) {
           const userData = doc.data();
-          const addresses = userData.addresses; // assuming 'addresses' is an array property of the user document
+          const addresses = userData.addresses || []; // assuming 'addresses' is an array property of the user document
           // Do something with the addresses, like setting state
           console.log(addresses);
+          // setSavedAddresses(addresses)
         } else {
           console.log("User document doesn't exist");
           // Handle case where user document doesn't exist
@@ -386,23 +390,42 @@ const CheckoutScreen = () => {
     }
   }, [cartItems]);
 
+
   if (!cartItems){
     return <Screen>
       <AppText>
         There are no items in your cart yet. 
       </AppText>
     </Screen>
-  }
+  } 
   return (
     // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
     <Screen style={styles.container}>
     <ScrollView style={styles.container}>
       {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
       {/* <AddressForm onSave={saveAddressToFirestore} /> */}
-      {(savedAddresses.length > 0)? (<View>
-        <AppText>Saved Addresses: ${JSON.stringify(savedAddresses)}</AppText></View>):(<View><AppText>No Saved Addresses</AppText></View>)}
+      <View style={styles.section}>
+      {(savedAddresses.length > 0)? (
+        <RowView style={{justifyContent: "space-between"}}>
+      <View>
+        <AppText type={"smallNormal"}>Deliver To:
+          <AppText type={"smallBold"}> {savedAddresses[0].name},{savedAddresses[0].pincode}</AppText>
+        </AppText>
+        <AppText type={"smallLight"} numberOfLines={1}>
+          {savedAddresses[0].address}
+        </AppText>
+        </View>
+        <AppButton text="Change" width={100} height={50} borderRadius={10}/>
+        </RowView>
+        ):(<View style={{alignItems: "center"}}>
+          <AppText type={"smallBold"}>You have no address saved.</AppText>
+          <AppButton text="Add Address" width={200} height={50} borderRadius={10}/>
+          </View>)}
+        </View>
 
-
+  <View style={styles.separator}></View>
+        
+  <View style={styles.section}>
       <FlatList
         data={cartItems}
         keyExtractor={(item) => item.image.toString()}
@@ -415,10 +438,44 @@ const CheckoutScreen = () => {
           />
         )}
       />
-      <View style={styles.orderSummary}>
-      <AppText>Cart Total: {cartTotal}</AppText>
+      </View>
+
+      
+    <View style={styles.separator}></View>
+
+    <View style={styles.section}>
+        <AppText type="h3Bold">Your total</AppText>
     </View>
-      <AppButton text="Place Order" onPress={placeOrder} style={{padding: 16}}/>
+    
+    <View style={styles.section}>
+      <RowView style={styles.checkoutRow}>
+        <AppText type="mediumNormal">Items Total</AppText>
+        <AppText type="mediumNormal">₹ {cartTotal}</AppText>
+      </RowView>
+
+    <RowView style={styles.checkoutRow}>
+      <AppText
+        type="mediumNormal"
+        style={{ textDecorationLine: "underline" }}
+      >
+        Taxes
+      </AppText>
+
+      <AppText type="mediumNormal">
+      ₹ {Math.floor(cartTotal * 0.18)}
+      </AppText>
+      
+    </RowView>
+
+    <RowView style={styles.checkoutRow}>
+      <AppText type="mediumSemiBold">Total</AppText>
+      <AppText type="mediumNormal">₹ {cartTotal + cartTotal*0.18}</AppText>
+    </RowView>
+  </View>
+
+          <View style={styles.separator}></View>
+
+      <AppButton text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
     </ScrollView>
     </Screen>
     // </StripeProvider>
@@ -426,7 +483,19 @@ const CheckoutScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  
+  separator: {
+    width: "100%",
+    height: 1,
+    backgroundColor: "lightgrey",
+    marginVertical: 10,
+    alignSelf: "center",
+  },
+  section: {
+    marginVertical: 10,
+  },
+  checkoutRow: {
+    justifyContent: "space-between",
+  },
 });
 
 export default CheckoutScreen;

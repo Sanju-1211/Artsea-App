@@ -2,6 +2,7 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet } from 'react-native';
 import AppButton from './AppButton';
+import AppText from '../components/AppText';
 
 const OrderConfirmationModal = ({ visible, onConfirm }) => {
   return (
@@ -12,7 +13,7 @@ const OrderConfirmationModal = ({ visible, onConfirm }) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <Text style={styles.modalText}>Order placed successfully!</Text>
+          <AppText style={styles.modalText}>Order placed successfully! You will be receiving confirmation email. </AppText>
           <AppButton
             title="OK"
             onPress={onConfirm}

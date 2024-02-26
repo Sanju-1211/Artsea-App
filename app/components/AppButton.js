@@ -36,7 +36,7 @@
 // TODO: It's very easy to create the auto-completion type of custom component as long as
 // I mention it in the props.
 import React from "react";
-import { StyleSheet, Pressable, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, Pressable, Text, TouchableOpacity, Platform } from "react-native";
 import { Button } from "react-native-paper";
 import colors from "../config/colors";
 
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   duoButtonText: {
-    fontFamily: "Helvetica Neue",
+    fontFamily: Platform.OS == "android" ? "Roboto" : "Avenir",
     fontSize: 16,
     fontWeight: "500",
   },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   labelStyle: {
-    fontFamily: "Helvetica Neue",
+    fontFamily: Platform.OS == "android" ? "Roboto" : "Avenir",
     fontSize: 16,
     textAlign: "center",
   },

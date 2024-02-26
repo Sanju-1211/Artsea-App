@@ -25,7 +25,7 @@ function AppText({ type = "smallNormal", color, style, children, ...props }) {
   // children.
   // Any other Text props we use, like onPress? We need to assume
   // that they are {...props}.
-  const textColor = color ? color : colors.darkgrey;
+  const textColor = color ? color : colors.black;
   return (
     <Text
       style={[styles.base, styles[type], { color: textColor }, style]}
@@ -39,7 +39,7 @@ function AppText({ type = "smallNormal", color, style, children, ...props }) {
 
 const styles = StyleSheet.create({
   base: {
-    fontFamily: Platform.OS == "android" ? "Roboto" : "Helvetica Neue",
+    fontFamily: Platform.OS == "android" ? "Roboto" : "Avenir",
   },
   // Heading 1
   h1Light: { fontSize: 25, fontWeight: "300", lineHeight: 37.5 },
