@@ -32,76 +32,53 @@ function AppNavigator() {
                     component={HomeScreenNavigator}
                     options={{
                         tabBarIcon: ({focused}) => (
-                        <View>
-                            
-                            <MaterialCommunityIcons name="home" size={24} color={colors.black} />
+                            focused? (
+                                <View>
+                            <MaterialCommunityIcons name="home" size={28} color={colors.black} />
                         </View>
+                            ) : (
+                                <View>
+                            <MaterialCommunityIcons name="home-outline" size={28} color={colors.black} />
+                        </View>
+                            )
                         ),
                     }} 
                     />
-        {
-            seller ?
-            <Tab.Screen name="+" 
-                    component={AddItemScreenNavigator} 
-                    options={{
-                        tabBarIcon: ({focused}) => (
-                        <View>
-                            <AntDesign name="plussquareo" size={24} color={colors.black} />
-                        </View>
-                        ),
-                    }} 
-                    />
-            :
+      
             <Tab.Screen name="Cart" 
                     component={CheckoutScreenNavigator} 
                     options={{
                         tabBarIcon: ({focused}) => (
                         <View
                             >
-                            <MaterialCommunityIcons name="cart-variant" size={24} color={colors.black} />
+                                {focused?(
+                                    <Ionicons name="cart" size={28} color={colors.black} />
+                                ) : (
+                                    <Ionicons name="cart-outline" size={28} color={colors.black} />
+                                )}
+                            
                         </View>
                         ),
                     }} 
                     />            
-        }
-
-        <Tab.Screen name="Order" 
-                    component={OrderScreenNavigator} 
-                    options={{
-                        tabBarIcon: ({focused}) => (
-                        <View
-                            >
-                            <FontAwesome name="reorder" size={24} color={colors.black} />
-                        </View>
-                        ),
-                    }} 
-                    />  
-        {
-            seller ?                
-            <Tab.Screen name="SellerProfile" 
-                        component={SellerProfileScreenNavigator} 
-                        options={{
-                            tabBarIcon: ({focused}) => (
-                            <View
-                                >
-                                <Ionicons name="person-circle" size={24} color={colors.black} />
-                            </View>
-                            ),
-                        }} 
-                        />  
-            :
+        
             <Tab.Screen name="BuyerProfile" 
                         component={BuyerProfileScreenNavigator} 
                         options={{
                             tabBarIcon: ({focused}) => (
                             <View
                                 >
-                                <Ionicons name="person-circle" size={24} color={colors.black} />
+                                    {focused?(
+                                        <Ionicons name="person-circle" size={28} color={colors.black} />
+                                    ) : (
+                                        <Ionicons name="person-circle-outline" size={28} color={colors.black} />
+                                    )}
+                                
                             </View>
                             ),
                         }} 
                         />              
-        }                     
+                           
         </Tab.Navigator>
         
     );
