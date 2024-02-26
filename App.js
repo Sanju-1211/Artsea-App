@@ -11,6 +11,11 @@ import firebase from 'firebase/compat';
 import { initializeApp } from "firebase/app";
 import { AuthContextProvider } from './app/services/auth/AuthContext';
 import { Navigation } from './app/navigation';
+import { initializeAuth } from "firebase/auth";
+import { getReactNativePersistence } from "firebase/auth";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -25,9 +30,16 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
+if (firebase.apps.length === 0) {
+  // console.log("Firebase App Initialized.");
+
+  // Initialize App with Persisting Logins.
+  const Artsea = firebase.initializeApp(firebaseConfig);
+  // Make sure that 
+  initializeAuth(Artsea, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+}
 
 export default function App() {
     return (

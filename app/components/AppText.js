@@ -18,13 +18,14 @@
 
 import React from "react";
 import { Text, StyleSheet, Platform } from "react-native";
+import colors from "../config/colors";
 
 function AppText({ type = "smallNormal", color, style, children, ...props }) {
   // We are using 3 props explicitly: type, style, and ofcourse,
   // children.
   // Any other Text props we use, like onPress? We need to assume
   // that they are {...props}.
-  const textColor = color ? color : "black";
+  const textColor = color ? color : colors.darkgrey;
   return (
     <Text
       style={[styles.base, styles[type], { color: textColor }, style]}

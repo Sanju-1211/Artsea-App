@@ -360,7 +360,7 @@ const CheckoutScreen = () => {
     // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
     <Screen style={styles.container}>
     <ScrollView style={styles.container}>
-      <AppText>Ready: {JSON.stringify(ready)}</AppText>
+      {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
       <AddressForm onSave={saveAddressToFirestore} />
       
       <FlatList

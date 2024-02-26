@@ -1,21 +1,34 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView} from "react-native";
+import { View, StyleSheet, ScrollView, useWindowDimensions, Image, Text} from "react-native";
 import ItemCard from "../components/ItemCard";
 import Screen from "../components/Screen";
 import AppText from "../components/AppText";
 import AppButton from "../components/AppButton";
 import UserCard from "../components/UserCard";
 import firebase from "firebase/compat";
-
+import RowView from "../components/RowView" 
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { useRoute } from "@react-navigation/native";
+import { FlatList } from "react-native-gesture-handler";
+import AppIcon from "../components/AppIcon";
+
+function toTitleCase(str) {
+    return str.replace(
+      /\w\S*/g,
+      function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+      }
+    );
+  }
 
 export default function ItemDetailScreen(props) {
     // Change Made: Got item from item prop 
     let item = props.route.params?.item; 
     console.log(`item`, item)
 
-    const seller=false;
-    const [qtyCounter, setQtyCounter] = useState(0);
+    const WIDTH = useWindowDimensions().width;
+
+    const [qtyCounter, setQtyCounter] = useState(1);
     const increaseQtyCount = () => {
         console.log(qtyCounter);
         setQtyCounter(qtyCounter+1);
@@ -113,109 +126,443 @@ export default function ItemDetailScreen(props) {
     }
     
 
-
-
     return (
-        <Screen style={styles.screen}>
-        <ScrollView>
-            <ItemCard
+        <Screen style={{ ...styles.container, width: WIDTH }}>
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <FlatList
+                // data is the list of items
+                data={item.images}
+                // we want a horizontal list of images
+                horizontal
+                // we don't want to show the scrolling indicator
+                showsHorizontalScrollIndicator={false}
+                // when swiped, center the image, don't leave it in between
+                snapToAlignment="center"
+                // how fast should the image snap to center? 
+                decelerationRate={"slow"}
+                pagingEnabled
+                // a unique key for each item in the array of images
+                // in this case, the image itself is a unique id
+                // so we just return the item
+                keyExtractor={function (item) {
+                    return item;
+                  }}
+                // The render item function is what describes how each item 
+                // will be displayed in the list. 
+                // The render item function within a flat list receives an object 
+                // with multiple values by default. 
+                // But we just want to focus on the item it currently needs to focus on. 
+                renderItem={function ({ item }) {
+                    return (
+                      <View
+                        style={{
+                          width: WIDTH - 70,
+                          marginHorizontal: 10,
+                        }}
+                      >
+                        <Image
+                          style={{
+                            width: WIDTH,
+                            height: ((WIDTH - 70) * 2) / 3,
+                            aspectRatio: 3 / 2,
+                            resizeMode: "cover",
+                            borderRadius: 15,
+                          }}
+                          source={{uri: item}}
+                        />
+                      </View>
+                    );
+                  }}
+                  snapToInterval={useWindowDimensions().width - 50}
+                />
+
+            {/* Removing Original ItemCard */}
+            {/* <ItemCard
                 title = {item.item_name}
                 image = {item.image}
                 subTitle = {item.description}
                 imageStyle = {styles.imageStyle}
+            /> */}
+            
+            {/* Section: Title, Rating and Origin of Item */}
+        <View style={styles.section}>
+          <AppText type="h1Normal">{item.item_name}</AppText>
+          <View style={styles.row}>
+            <AppIcon
+            iconSet={"Entypo"}
+            iconName="star"
+            iconSize={18}
+              style={styles.icon}
+              color="black"
             />
-            {!seller &&
-            <View>
-                <View style={styles.qtyButtonRow}>
-                    <View style={styles.quantity}>
-                        <AppText style={styles.quantityLabel}>Qty</AppText> 
+            <AppText type="mediumLight">
+              {item.rating} · {item.area_name}, {item.location}
+            </AppText>
+          </View>
+        </View>
+
+        <View style={styles.separator}></View>
+
+        {/* Description */}
+        <View style={styles.section}>
+        <AppText type="h3Bold" style={{marginVertical: 8, color:"black"}}>
+            What It's Like
+        </AppText>
+        <AppText type="mediumNormal">{item.description}</AppText>
+        </View>
+        <RowView style={{marginBottom: 8}}>
+            <AppIcon
+                iconSet={"Entypo"}
+                iconName={"ruler"}
+                style={{marginRight: 8}}
+            />
+        <AppText type="mediumNormal">{item.dimensions[0]}l X {item.dimensions[1]}b X {item.dimensions[2]}h inches</AppText>
+        </RowView>
+        
+        <RowView style={{marginBottom: 8}}>
+        <AppIcon
+                iconSet={"Entypo"}
+                iconName={"palette"}
+                style={{marginRight: 8}}
+            />
+        <AppText type="mediumNormal">{item.materials_used.map(function(material, i){
+            console.log('i: ', i, 'material:', material)
+            if (i == (item.materials_used.length - 1)){
+                return `${material}`
+            } else {
+                return `${material}, `
+            }
+        })}</AppText>
+
+        </RowView>
+        
+        <RowView style={{marginBottom: 8}}>
+        <AppIcon
+                iconSet={"FontAwesome6"}
+                iconName={"weight-scale"}
+                style={{marginRight: 8}}
+            />
+        <AppText type="mediumNormal">
+            {item.weight} KG
+        </AppText>
+        </RowView>
+        <View style={styles.separator}></View>
+
+{/* Section: About The Artist */}
+<View style={styles.section}>
+  <RowView>
+  <AppText type="h3Bold" style={{marginVertical: 8, color:"black"}}>Made by {item.artist}</AppText>
+    <Image
+      style={{
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        borderColor: "lightgrey",
+        borderWidth: 1,
+        marginRight: 20,
+        margin: 16,
+        position: "absolute",
+        right: 5,
+      }}
+      source={{uri: item.artist_image}}
+    />
+  </RowView>
+  <AppText type="mediumNormal" style={{marginTop: 16,}}>
+    {item.artist_bio}
+  </AppText>
+</View>
+
+<View style={styles.separator}></View>
+
+        {/* Section: Location */}
+        <View style={styles.section}>
+        <AppText type="h3Bold" style={{marginVertical: 8, color:"black"}}>Where They're From</AppText>
+          <View pointerEvents="none" style={{ marginVertical: 10 }}>
+            <MapView
+              initialRegion={{
+                latitude: item.latitude,
+                longitude: item.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              provider={PROVIDER_GOOGLE}
+              style={styles.map}
+            >
+              <Marker
+                coordinate={{
+                  latitude: item.latitude,
+                  longitude: item.longitude,
+                }}
+              />
+            </MapView>
+          </View>
+
+          <AppText type="mediumBold">
+            {item.area_name}, {item.location}
+          </AppText>
+        </View> 
+        
+        <View style={styles.separator}></View>
+        
+        {/* Section: Item Reviews */}
+        {(item.reviews)? (
+            <View style={styles.section}>
+            <RowView style={{marginBottom: 8}}>
+              <AppIcon
+              iconSet={"Entypo"}
+              iconName={"star"}
+              iconSize={"18"}
+                style={styles.icon}
+              />
+              <AppText type="h3Bold" style={{marginVertical: 8, color:"black"}}>
+                {item.rating} · {item.reviews.length} {item.reviews.length > 1? 'reviews' : 'review'}
+              </AppText>
+            </RowView>
+            <RowView>
+              <FlatList
+                data={item.reviews}
+                horizontal
+                keyExtractor={function (review) {
+                    // console.log(`review in key extractor: ${JSON.stringify(review)}`)
+                  return `${review.buyer_name}:${review.reviewText}`;
+                }}
+                showsHorizontalScrollIndicator={false}
+                renderItem={function ({ item: review }) {
+                    // console.log(`review: ${JSON.stringify(review)}`)
+                  return (
+                    <View
+                      style={{
+                        width: WIDTH - 80,
+                        marginRight: 10,
+                        height: 250,
+                        borderWidth: 1,
+                        borderColor: "lightgrey",
+                        borderRadius: 10,
+                        padding: 10,
+                        shadowColor: "lightgrey",
+                        shadowOffset: {
+                          width: 0,
+                          height: 1,
+                        },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 1.41,
+  
+                        elevation: 2,
+                      }}
+                    >
+                      <RowView
+                      >
+                        <Image
+                          style={{
+                            width: 50,
+                            height: 50,
+                            borderRadius: 25,
+                            borderColor: "lightgrey",
+                            borderWidth: 1,
+                            marginRight: 20,
+                            marginVertical: 10,
+                          }}
+                          source={{uri: review.buyer_image}}
+                        />
+                        <View>
+                          <AppText type="mediumBold">
+                            {review.buyer_name}
+                          </AppText>
+                          <AppText type="smallNormal">
+                            {review.weeks_ago} {review.weeks_ago > 1? 'weeks' : 'week'}
+                          </AppText>
+                        </View>
+                      </RowView>
+                      <AppText type="mediumNormal" numberOfLines={6}>
+                        {review.review_text}
+                      </AppText>
                     </View>
+                  );
+                }}
+              />
+            </RowView>
+          </View>
+        ) : (<View></View>)}
+        
+        
+        <View style={styles.separator}></View>
+        <View style={{...styles.section, marginBottom:100}}>
+            
+        <AppText type="h3Bold" style={{marginVertical: 8, color:"black"}}>When Will I Get It</AppText>
+        <RowView style={{marginBottom: 8}}>
+        <AppIcon
+               iconSet={"MaterialCommunityIcons"}
+               iconName={"clock"}
+               style={{marginRight: 8}}
+            />
+        <AppText type="mediumNormal">{item.delivery_details.time}</AppText>
+        </RowView>
+          <RowView style={{marginBottom: 8}}>
+        <AppIcon
+                iconSet={"MaterialCommunityIcons"}
+                iconName={"truck-delivery"}
+                style={{marginRight: 8}}
+            />
+        <AppText type="mediumNormal">{item.delivery_details.fee}</AppText>
+        </RowView>
+        <RowView style={{marginBottom: 8}}>
+        <AppIcon
+                iconSet={"FontAwesome"}
+                iconName={"undo"}
+                style={{marginRight: 8}}
+            />
+        <AppText type="mediumNormal">{item.delivery_details.refund}</AppText>
+        </RowView>
+        
+
+        </View>
+<View style={styles.separator}></View>
+
+            </ScrollView>            
+            <RowView style={styles.footer}>
+            
+          <Text style={styles.h3}>₹{item.price}</Text>
+        
+                <RowView style={{alignItems: "center", justifyContent: "space-evenly", width: WIDTH/2.5}}>
                     <AppButton text="-" 
                             onPress={()=>decreaseQtyCount()} 
-                            style={styles.button}
-                            labelStyle={styles.buttonText}
+                            width={30}
+                            height={30}
+                            borderRadius={5}
                             />   
-
-                    <View style={styles.quantity}>
-                        <AppText style={styles.quantityLabel}>{qtyCounter}</AppText>
-                    </View>
+                        <AppText type="mediumBold">   {qtyCounter}   </AppText>  
                     <AppButton text="+" 
                             onPress={()=>increaseQtyCount()} 
-                            style={styles.button}
-                            labelStyle={styles.buttonText}/>    
-                </View>
-                <View style={styles.addToCartContainerStyle}>
+                            width={30}
+                            borderRadius={5}
+                            height={30}
+                            />     
+                </RowView>
+                
                     <AppButton 
+                    width={WIDTH/3}
                     buttonDisabled={qtyCounter === 0}
-                    text="Add to Cart" buttonStyle={styles.addToCartStyle}
+                    text="Add to Cart" 
                     onPress={() => addToCart(item, qtyCounter)}/>
-                </View>
-            </View>
-            }
-            <View >
-                <View style={styles.userContainer}>
-                    <UserCard title="samantha123" subTitle="@samantha padukone" image = {require("../assets/mosh.jpg")}></UserCard>
-                </View>                    
-                <AppText style={styles.productDetailHeading}>Product Details</AppText> 
-                <AppText style={styles.productDetail}>
-                    Test Description
-                </AppText>
-            </View>
-            </ScrollView>            
+            </RowView>
+            
         </Screen>
     );
   }
   
 
-  const styles = StyleSheet.create({
+  
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    }, // Size, Layout, Boundaries, Fill, etc.
+    detailsView: { margin: 20 },
+    separator: {
+      width: "100%",
+      height: 1,
+      backgroundColor: "lightgrey",
+      marginVertical: 10,
+      alignSelf: "center",
+    },
+    section: {
+      marginVertical: 10,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginVertical: 5,
+    },
+    h1: { fontSize: 25, fontWeight: "600", lineHeight: 37.5 },
+    h2: { fontSize: 22, fontWeight: "500", lineHeight: 33 },
+    h3: { fontSize: 20, fontWeight: "500", lineHeight: 30 },
+    h4: { fontSize: 18, fontWeight: "600", lineHeight: 27 },
+    normal: { fontSize: 16, fontWeight: "300", lineHeight: 24 },
+    small: { fontSize: 14, fontWeight: "300", lineHeight: 21 },
+    icon: { width: 20, marginRight: 5 },
+    map: {
+      width: "100%",
+      aspectRatio: 3 / 2,
+      borderRadius: 20,
+    },
+    footer: {
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
+      height: 80,
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingTop: 5,
+      padding: 10,
+      borderTopColor: "lightgrey",
+      borderTopWidth: 1,
+      elevation: 5,
+      backgroundColor: "white",
+    },
     button: {
-      width: 30,
-      height: 30,
-      borderRadius: 0,
-      padding: 5
+      width: 150,
+      height: 40,
+      alignSelf: "center",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: 0,
+      borderRadius: 10,
+      backgroundColor: "#FF385C",
     },
-    imageStyle:{
-        height: 400,
+    buttonLabel: {
+      color: "white",
+      fontSize: 15,
+      fontWeight: "bold",
     },
-    buttonText:{
-        fontSize: 15,
-    },
-    userContainer:{
-        flexDirection: 'row',
-        alignItems:"center",
-        justifyContent: "space-between"
-    },
-    messageStyle:{
+    button: {
+        width: 30,
         height: 30,
-        width:80
-    },
-    addToCartStyle:{
-        height: 40,
-        width:"100%"
-    },
-    quantityLabel:{
-        fontWeight: "bold",
-        padding: 10,
-    },
-    productDetailHeading:{
-        fontWeight: "bold",
-        padding: 10,
-    },
-    productDetail:{
-        padding: 10,
-        paddingBottom: 30
-    },        
-    quantity:{
-        justifyContent: "center",
-        alignItems: "center",        
-    },
-    qtyButtonRow:{
-        marginTop: 10,
-        flexDirection: 'row',
-        marginBottom: 5,
-        alignItems:"center"
-    },
-    screen: {
-        padding: 16, 
-    },
-})
+        borderRadius: 0,
+        padding: 5
+      },
+      imageStyle:{
+          height: 400,
+      },
+      buttonText:{
+          fontSize: 15,
+      },
+      userContainer:{
+          flexDirection: 'row',
+          alignItems:"center",
+          justifyContent: "space-between"
+      },
+      messageStyle:{
+          height: 30,
+          width:80
+      },
+      addToCartStyle:{
+          height: 40,
+          width:"100%"
+      },
+      quantityLabel:{
+          fontWeight: "bold",
+          padding: 10,
+      },
+      productDetailHeading:{
+          fontWeight: "bold",
+          padding: 10,
+      },
+      productDetail:{
+          padding: 10,
+          paddingBottom: 30
+      },        
+      quantity:{
+          justifyContent: "center",
+          alignItems: "center",        
+      },
+      qtyButtonRow:{
+          marginTop: 10,
+          flexDirection: 'row',
+          marginBottom: 5,
+          alignItems:"center"
+      },
+      screen: {
+          padding: 16, 
+      },
+  });
+  

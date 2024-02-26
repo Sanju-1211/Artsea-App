@@ -7,6 +7,7 @@ import {
   Ionicons,
   FontAwesome,
   FontAwesome5,
+  FontAwesome6,
   SimpleLineIcons,
   Fontisto,
   Feather,
@@ -115,9 +116,20 @@ function AppIcon({ iconSet, iconName, iconSize, style, ...props }) {
         suppressHighlighting={true}
       />
     );
-  } else if ((iconSet = "EvilIcons")) {
+  } else if ((iconSet == "EvilIcons")) {
     return (
       <EvilIcons
+        name={iconName}
+        size={iconSize ? iconSize : 24}
+        style={[styles.icon, style]}
+        {...props}
+        suppressHighlighting={true}
+      />
+    );
+  }
+  else if ((iconSet == "FontAwesome6")) {
+    return (
+      <FontAwesome6
         name={iconName}
         size={iconSize ? iconSize : 24}
         style={[styles.icon, style]}

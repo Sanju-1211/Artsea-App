@@ -72,6 +72,7 @@ import colors from "../config/colors";
 export default function AppButton({
   width,
   height,
+  borderRadius, 
   buttonColor,
   textColor,
   labelStyle,
@@ -93,6 +94,7 @@ export default function AppButton({
           height: height ? height : 50,
           opacity: buttonDisabled ? 0.7 : 1,
           backgroundColor: buttonColor ? buttonColor : colors.primaryLight,
+          borderRadius: borderRadius? borderRadius : 10,
         },
         style,
       ]}
@@ -119,7 +121,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginVertical: 10,
-    borderRadius: 10,
   },
   duoButtonText: {
     fontFamily: "Helvetica Neue",
