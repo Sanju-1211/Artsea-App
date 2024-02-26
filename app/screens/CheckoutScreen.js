@@ -115,6 +115,7 @@ import Screen from '../components/Screen';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StripeProvider, usePaymentSheet } from "@stripe/stripe-react-native";
 import { useFocusEffect } from '@react-navigation/native';
+import Loading from '../components/Loading';
 
 // STRIPE
 // const API_URL = "http://192.168.1.4:3000";
@@ -123,9 +124,12 @@ import { useFocusEffect } from '@react-navigation/native';
 // const PUBLISHABLE_KEY = "pk_live_51MY8orSJTJQgHNK3doioI6IIGFnZI2SnsDg4ckp89cj9JjBPRGSge5HSgAMPJB5nhUHKAF9hwm115RcJCrn9JFCa0017TczqfA"
 
 const CheckoutScreen = () => {
+
   const [cartItems, setCartItems] = useState([]);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [cartTotal, setCartTotal] = useState(0)
+  const [savedAddresses, setSavedAddresses] = useState([]);
+
 
   // Stripe
   // const [ready, setReady] = useState(false);
@@ -324,6 +328,31 @@ const CheckoutScreen = () => {
     }
   };
   
+  // get the list of addresses of the user 
+  useEffect(() => {
+    const user = firebase.auth().currentUser;
+  
+    if (user) {
+      const userRef = firebase.firestore().collection('users').doc(user.uid);
+      const unsubscribe = userRef.onSnapshot(doc => {
+        if (doc.exists) {
+          const userData = doc.data();
+          const addresses = userData.addresses; // assuming 'addresses' is an array property of the user document
+          // Do something with the addresses, like setting state
+          console.log(addresses);
+        } else {
+          console.log("User document doesn't exist");
+          // Handle case where user document doesn't exist
+        }
+      }, error => {
+        console.error('Error fetching user document: ', error);
+      });
+  
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    }
+  }, []);
+  
   
   const saveAddressToFirestore = async (address) => {
     const user = firebase.auth().currentUser;
@@ -351,18 +380,29 @@ const CheckoutScreen = () => {
   };
   
   useEffect(() => {
-    const newTotal = calculateTotals(cartItems);
-    setCartTotal(newTotal)
+    if (cartItems?.length > 0){
+      const newTotal = calculateTotals(cartItems);
+      setCartTotal(newTotal)
+    }
   }, [cartItems]);
 
-
+  if (!cartItems){
+    return <Screen>
+      <AppText>
+        There are no items in your cart yet. 
+      </AppText>
+    </Screen>
+  }
   return (
     // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
     <Screen style={styles.container}>
     <ScrollView style={styles.container}>
       {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
-      <AddressForm onSave={saveAddressToFirestore} />
-      
+      {/* <AddressForm onSave={saveAddressToFirestore} /> */}
+      {(savedAddresses.length > 0)? (<View>
+        <AppText>Saved Addresses: ${JSON.stringify(savedAddresses)}</AppText></View>):(<View><AppText>No Saved Addresses</AppText></View>)}
+
+
       <FlatList
         data={cartItems}
         keyExtractor={(item) => item.image.toString()}
@@ -371,6 +411,7 @@ const CheckoutScreen = () => {
             item={item}
             onUpdateQuantity={handleUpdateQuantity}
             onRemoveItem={handleRemoveItem}
+            style={{width: "5"}}
           />
         )}
       />
@@ -385,9 +426,7 @@ const CheckoutScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container:{
-    padding: 16,
-  }
+  
 });
 
 export default CheckoutScreen;
