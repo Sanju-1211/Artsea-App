@@ -62,6 +62,7 @@ items}) {
   // 4. 
     return (
         <FlatList
+        showsVerticalScrollIndicator={false}
           	numColumns={numOfColumns}
           	data={items}
          	keyExtractor={(item, index) => item.image.toString()}
@@ -73,7 +74,7 @@ items}) {
 							cardStyle ={itemCardStyle}
 							showIcons = {showIcons}
 							title={item.item_name}
-							subTitle={"$" + item.price}
+							subTitle={"₹" + item.price}
 							image={item.image}
 							imageStyle={imageStyle}
               onPress={() => {

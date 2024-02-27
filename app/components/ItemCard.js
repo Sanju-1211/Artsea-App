@@ -5,13 +5,15 @@ import { Entypo  } from '@expo/vector-icons';
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function ItemCard({ title, subTitle, image, imageStyle, onPress, showIcons, cardStyle }) {
+function ItemCard({ title, subTitle, image, imageStyle, onPress,  cardStyle
+	// showIcons,
+}) {
 	console.log("Rendering Item Card")
 	
-	const [itemLiked,setItemLiked] = useState(false);
-	const clickedHeart = () => {
-		setItemLiked(!itemLiked);
-	};
+	// const [itemLiked,setItemLiked] = useState(false);
+	// const clickedHeart = () => {
+	// 	setItemLiked(!itemLiked);
+	// };
 
   	return (
       	<View style={[styles.card,cardStyle]}>
@@ -21,17 +23,9 @@ function ItemCard({ title, subTitle, image, imageStyle, onPress, showIcons, card
 				</View>
 			</TouchableHighlight>
 			<View style={styles.detailsContainer}>
-				<AppText style={styles.title}>{title}</AppText>
+				<AppText type={"mediumBold"}>{title}</AppText>
 				<View style={styles.iconContainer}>
-					<AppText style={styles.subTitle}>{subTitle}</AppText>
-					{showIcons &&
-					<View style = {styles.iconsRow}>
-						{itemLiked ? 
-						<Entypo name="heart" size={24} color="#E34290" style={styles.icon} onPress={()=>clickedHeart()}/>:
-						<Entypo name="heart-outlined" size={24} color={colors.button} style={styles.icon} onPress={()=>clickedHeart()} />
-						}
-					</View>   
-					}     
+					<AppText type={"smallNormal"}>{subTitle}</AppText>  
 				</View>
 			</View>
       	</View>
@@ -46,7 +40,11 @@ const styles = StyleSheet.create({
     	borderColor: "#eed7c5",
     	borderRadius:10,
 	},
-
+	detailsContainer:{
+		marginLeft:8,
+		marginTop: 8,
+		marginBottom: 4,
+	},
   	iconsRow:{
     	flexDirection: "row"
   	},

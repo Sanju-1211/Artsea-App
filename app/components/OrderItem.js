@@ -101,15 +101,29 @@ function OrderItem({ item, style}) {
           <AppText style={{textDecorationLine: "underline"}} type="mediumNormal">Get Help</AppText>
           </TouchableOpacity>
           </RowView>
+
           <RowView >
-        <AppIcon
+          {item.status == 'pending'? (<>
+            <AppIcon
                iconSet={"MaterialCommunityIcons"}
                iconName={"clock"}
                style={{marginRight: 8}}
                iconSize={12}
             />
         <AppText type="extraSmallLight">
-            Arriving By {item.arrivingBy}</AppText>
+            Arriving By {item.arrivingBy}</AppText></>):(
+                <>
+                <AppIcon
+               iconSet={"MaterialCommunityIcons"}
+               iconName={"check-circle"}
+               style={{marginRight: 8}}
+               iconSize={20}
+            />
+        <AppText type="extraSmallExtraBold">
+            Delivered</AppText>
+                </>
+            )}
+        
         </RowView>
           
         </View>

@@ -10,6 +10,9 @@ import AppButton from "../components/AppButton";
 import { AuthContext } from "../services/auth/AuthContext";
 import { FlatList } from "react-native-gesture-handler";
 import OrderItem from "../components/OrderItem";
+import RowView from "../components/RowView";
+import AppIcon from "../components/AppIcon";
+import { Avatar } from "react-native-paper";
 
 function BuyerProfileScreen() {
     const authContext = useContext(AuthContext);
@@ -51,7 +54,10 @@ function BuyerProfileScreen() {
           const unsubscribe = ordersRef.onSnapshot(doc => {
             if (doc.exists) {
                 console.log('Got the orders document')
-                const allOrders = doc.data()['orders']
+                let allOrders = doc.data()['orders']
+                // Assuming each order has a 'createdAt' timestamp field
+                // Order all orders by recency 
+                allOrders = allOrders.sort((a, b) => b.createdAt - a.createdAt);
               setOrders(allOrders);
 
               // flatMap is used instead of map followed by flat. 
@@ -87,7 +93,7 @@ function BuyerProfileScreen() {
     if ((userDetails !== null) && (orders?.length) && (items?.length)){
         return (
             <Screen style={styles.screen}>
-                <View style={styles.UserCardHeader}>
+                {/* <View style={styles.UserCardHeader}>
                     <UserCard
                     image={{uri: userDetails.image}}
                     title={userDetails.full_name}
@@ -95,24 +101,35 @@ function BuyerProfileScreen() {
                     userCardStyle={styles.userCardStyle}
                     imageStyle = {styles.imageStyle}
                     />
-                </View>
-                <View >                         
-                </View> 
+                </View> */}
+                <RowView style={{justifyContent: "space-between", marginBottom: 16}}>
+                    <RowView style={{flex: 1}}>
+                <Avatar.Image
+              source={{
+                uri: userDetails.image,
+              }}
+              size={60}
+              style={styles.imageStyle}
 
-                          <AppButton
-            width={dimensions.width / 2.3}
-            height={45}
-            buttonColor={colors.whitegrey}
-            textColor={colors.black}
-            labelStyle={{ fontWeight: "bold" }}
-            style={{
-              borderRadius: 10,
-            }}
+            />
+                
+                    <AppText type={"h1ExtraBold"}>{userDetails.full_name}</AppText>
+                    </RowView>
+                    <AppButton
+                        width={80}
+                        height={40}
             onPress={() => authContext.onLogout()}
+            icon="logout"
             text="Logout"
           />    
-          <View style={styles.section}>
+          
+                </RowView>
+
+                          
+          
+            <AppText type={"h3Bold"}>Orders</AppText>
       {(items?.length > 0)? (<FlatList
+      showsVerticalScrollIndicator={false}
           data={items}
           keyExtractor={(item) => `${item.image}${Math.random()}`}
           renderItem={({ item }) => (
@@ -124,9 +141,9 @@ function BuyerProfileScreen() {
             />
           )}
         />):(<View><AppText>
-        There are no items in your cart yet. 
+        You've not placed any orders yet. 
      </AppText></View>)}
-        </View>
+        
 
          
             </Screen>
@@ -165,11 +182,11 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		justifyContent: "space-around"
 	},
-	imageStyle:{
-		height:100,
-		width: 100,
-		borderRadius: 50
-	}
+	// imageStyle:{
+	// 	height:100,
+	// 	width: 100,
+	// 	borderRadius: 50
+	// }
 });
 
 export default BuyerProfileScreen;

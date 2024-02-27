@@ -239,6 +239,7 @@ const CheckoutScreen = () => {
   
         // Optionally, set orderPlaced to true if you're using it to show a confirmation screen
         setOrderPlaced(true);
+        navigation.navigate("OrderConfirmationScreen")
         
       } catch (error) {
         console.error('Error placing order or clearing cart: ', error);
@@ -388,7 +389,7 @@ const CheckoutScreen = () => {
   
             <View style={styles.separator}></View>
   
-        <AppButton buttonDisabled={cartItems.length == 0 || !currentAddress} text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
+        <AppButton buttonDisabled={cartItems.length == 0 || !currentAddress} text="Order & Pay on Delivery" onPress={placeOrder} />
       </ScrollView>
       
     
