@@ -35,7 +35,7 @@
 
 // TODO: It's very easy to create the auto-completion type of custom component as long as
 // I mention it in the props.
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Pressable, Text, TouchableOpacity, Platform } from "react-native";
 import { Button } from "react-native-paper";
 import colors from "../config/colors";
@@ -79,10 +79,15 @@ export default function AppButton({
   style,
   buttonDisabled = false,
   children,
+  borderBottom,
   ...props
 }) {
+  const [isPressed, setIsPressed] = useState(false);
+
   return (
     <TouchableOpacity
+      onPressIn={() => setIsPressed(true)} // Handle press in
+      onPressOut={() => setIsPressed(false)} // Handle press out
       style={[
         // Default style
         styles.duoButtonContainer,
@@ -95,11 +100,13 @@ export default function AppButton({
           opacity: buttonDisabled ? 0.7 : 1,
           backgroundColor: buttonColor ? buttonColor : colors.primary,
           borderRadius: borderRadius? borderRadius : 10,
+          borderBottomWidth: isPressed? 0 : 5,
+          borderColor: colors.primaryDark 
         },
         style,
       ]}
       onPress={props.onPress}
-      activeOpacity={0.8}
+      activeOpacity={1}
     >
       <Text
         style={[
@@ -125,7 +132,7 @@ const styles = StyleSheet.create({
   duoButtonText: {
     fontFamily: Platform.OS == "android" ? "Roboto" : "Avenir",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "700",
   },
   buttonStyle: {
     margin: 8,

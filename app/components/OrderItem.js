@@ -1,10 +1,10 @@
-// // CartItem.js
+// // OrderItem.js
 // import React from 'react';
 // import { View, Text, StyleSheet } from 'react-native';
 // import AppButton from './AppButton';
 // import AppText from './AppText';
 
-// const CartItem = ({ item, onUpdateQuantity, onRemoveItem }) => {
+// const OrderItem = ({ item, onUpdateQuantity, onRemoveItem }) => {
 //   return (
 //     <View style={styles.container}>
 //       <AppText>{item.item_name}</AppText>
@@ -22,7 +22,7 @@
 //   },
 // });
 
-// export default CartItem;
+// export default OrderItem;
 
 import React from "react";
 import {
@@ -32,6 +32,7 @@ import {
   Image,
   useWindowDimensions,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import Screen from "./Screen";
 import AppIcon from "./AppIcon";
@@ -39,6 +40,7 @@ import { useNavigation } from "@react-navigation/native";
 import AppText from "./AppText";
 import AppButton from "./AppButton";
 import RowView from "./RowView";
+import * as Linking from "expo-linking"
 
 function toTitleCase(str) {
   return str.replace(
@@ -48,7 +50,7 @@ function toTitleCase(str) {
     }
   );
 }
-function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
+function OrderItem({ item, style}) {
   const navigation = useNavigation()
   const WIDTH = useWindowDimensions().width
   return (
@@ -57,6 +59,7 @@ function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
         ...styles.container,
         width: WIDTH - 32,
         height: 185,
+        marginVertical: 8,
         ...style
       }}
       
@@ -68,11 +71,6 @@ function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
         <RowView style={{justifyContent: "space-between"}}>
           <AppText type={"mediumBold"}  >{item.item_name}</AppText>
           <View style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}}>
-          <AppIcon
-          iconSet={"Entypo"}
-              iconName={"trash"}
-              iconSize={20}
-              onPress={() => onRemoveItem(item.image)} />
           </View>
             
         </RowView>
@@ -80,33 +78,28 @@ function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
           {toTitleCase(item.type)} by {item.artist}
         </AppText>
         <RowView style={{justifyContent: "space-between",  width: "50%"}}>
-        <AppButton text="-" 
-                            onPress={() => item.quantity > 1 && onUpdateQuantity(item.image, item.quantity - 1)} 
-                            width={20}
-                            height={20}
-                            borderRadius={3}
-                            />   
-                        <AppText type="mediumBold">   {item.quantity}   </AppText>  
-                    <AppButton text="+" 
-                            onPress={() => onUpdateQuantity(item.image, item.quantity + 1)} 
-                            width={20}
-                            borderRadius={3}
-                            height={20}
-                            />   
+            <AppText type="mediumBold">Qty: {item.quantity}</AppText>  
         </RowView>
         
         <View>
           <AppText type="mediumSemiBold" style={{marginBottom: 8}}>
           ₹ {item.price*item.quantity}
           </AppText>
-          <RowView >
+          <RowView style={{marginBottom: 8}}>
           <AppIcon
                   iconSet={"FontAwesome"}
-                  iconName={"undo"}
+                  iconName={"phone"}
                   style={{marginRight: 8}}
-                  iconSize={12}
+                  iconSize={24}
               />
-          <AppText type="extraSmallLight">{item.delivery_details.refund}</AppText>
+          <TouchableOpacity 
+            onPress={()=>{
+                Linking.openURL(`tel:${+919899829771}`)
+            }
+            }
+          >
+          <AppText style={{textDecorationLine: "underline"}} type="mediumNormal">Get Help</AppText>
+          </TouchableOpacity>
           </RowView>
           <RowView >
         <AppIcon
@@ -115,7 +108,8 @@ function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
                style={{marginRight: 8}}
                iconSize={12}
             />
-        <AppText type="extraSmallLight">{item.delivery_details.time}</AppText>
+        <AppText type="extraSmallLight">
+            Arriving By {item.arrivingBy}</AppText>
         </RowView>
           
         </View>
@@ -189,4 +183,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CartItem;
+export default OrderItem;

@@ -36,6 +36,7 @@ const styles = StyleSheet.create({
     buttonsContainer: {
         padding: 20,
         width: "100%",
+        bottom: 50,
     },
     button: {
         borderWidth: 2,

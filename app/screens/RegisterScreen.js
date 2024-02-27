@@ -175,7 +175,7 @@ function RegisterScreen(props) {
   });
 
   return (
-    <Screen style={styles.container}>
+    
       <ImageBackground
             blurRadius={30}
             style={styles.background}
@@ -223,24 +223,10 @@ function RegisterScreen(props) {
         containerStyle={styles.inputContainerStyle}
         inputStyle={styles.inputStyle}
       />
-      {/* Toggle Switch */}
-      <RowView>
-      <Switch
-            trackColor={{ false: colors.primaryLight, true: colors.primaryDark }}
-            thumbColor={isArtist ? colors.primaryLight : colors.primaryDark}
-            ios_backgroundColor={colors.primaryLight}
-            onValueChange={setIsArtist}
-            value={isArtist}
-            style={{margin: 10}}
-          />
-          <AppText type="mediumBold" style={styles.switchLabel} color={colors.white}>{isArtist? "I am an Artist": "I am a Customer"}</AppText>
-          
-        </RowView>
 
       {/* Button */}
       <AppButton
         buttonDisabled={buttonDisabled}
-        buttonColor={buttonDisabled ? colors.primaryLight : colors.primary}
         onPress={function () {
           if (!buttonDisabled) {
             authContext.onSignUp(email, password, fullName, isArtist);
@@ -271,10 +257,10 @@ function RegisterScreen(props) {
 
       {/* Footer to Log In */}
       <View style={styles.footer}>
-        <AppText type="smallNormal" style={{ color: colors.white }}>
+        <AppText type="mediumBold" style={{ color: colors.white }}>
           Already have an account?{" "}
           <AppText
-            type="smallBold"
+            type="mediumExtraBold"
             style={{ color: colors.primary }}
             onPress={() => {
               props.navigation.navigate("Login");
@@ -285,7 +271,6 @@ function RegisterScreen(props) {
         </AppText>
       </View>
       </ImageBackground>
-    </Screen>
   );
 }
 

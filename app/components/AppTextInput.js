@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: colors.lightgrey,
-    padding: 8,
+    padding: 5,
     marginVertical: 10,
     alignItems: "center",
     justifyContent: "center",
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     width: "100%",
-    height: 30,
+    height: 50,
     fontFamily: "Helvetica Neue",
     color: colors.black,
     fontWeight: "400",

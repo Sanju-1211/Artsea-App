@@ -197,7 +197,11 @@ const CheckoutScreen = () => {
       const cartRef = firebase.firestore().collection('carts').doc(user.uid);
       const now = new Date();
       const timestamp = firebase.firestore.Timestamp.fromDate(now)
-  
+       // Calculate the arrivingBy date by adding 7 days to the current date
+       const arrivingByDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+       // Format the arrivingBy date in a readable format, e.g., "Aug 7"
+       const arrivingByFormatted = arrivingByDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
       try {
         await firebase.firestore().runTransaction(async (transaction) => {
           const ordersDoc = await transaction.get(orderRef)
@@ -206,6 +210,7 @@ const CheckoutScreen = () => {
             items: cartItems,
             status: 'pending',
             createdAt: timestamp,
+            arrivingBy: arrivingByFormatted, // Use the formatted date
           }
 
           if (!ordersDoc.exists){
@@ -314,7 +319,7 @@ const CheckoutScreen = () => {
             {currentAddress.address}
           </AppText>
           </View>
-          <AppButton text="Change" width={100} height={50} borderRadius={10}
+          <AppButton text="Change" width={100} height={40} borderRadius={10}
            onPress={()=>{
             navigation.navigate("AddressesScreen", {addresses: savedAddresses})
           }}

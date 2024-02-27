@@ -73,8 +73,8 @@ function HomeScreen({navigation}) {
 						<Feather name="search" size={22} color={colors.primaryText} />
 					</TouchableOpacity> */}
 				</View>
-				{
-					highlightExplore && 
+				{/* {
+					highlightExplore &&  */}
 					<View style={{marginBottom:100, flexDirection:"row"}}>
 						<ItemListing 
 							navigation={navigation} 
@@ -83,7 +83,7 @@ function HomeScreen({navigation}) {
 							listStyle={styles.listStyle}
 							items={artItems}/>
 					</View>
-				}
+				{/* } */}
 				{/* {
 					highlightFollowing && <Following navigation={navigation}/>
 				} */}
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
 		width: 100,
 		height: 40,
 		resizeMode: "contain",
-		marginLeft: 10,
+
 	},
 	headerStyle: {
 		flexDirection: "row",

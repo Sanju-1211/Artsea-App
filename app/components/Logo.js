@@ -6,7 +6,7 @@ function Logo({logoContainerStyle,logoStyle,hideTagline}) {
     return (
         <View style={[styles.logoContainer,logoContainerStyle]}>
             <Image style={[styles.logo,logoStyle]} source={require("../assets/AppLogoWhite_big.png")} />
-            { !hideTagline && <Text style={styles.tagline}>See Art , Buy Art , Sell Art</Text> }
+            { !hideTagline && <Text style={styles.tagline}></Text> }
         </View>
     );
 }
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
       position: "absolute",
-      top: 70,
+      top: 120,
       alignItems: "center",
     },
     tagline: {

@@ -114,8 +114,8 @@ function LoginScreen(props) {
 
   // Get access to AuthContext value to use onSignIn function
   return (
-    <Screen style={styles.container}>
-      {/* Instagram Log */}
+    
+      
       <ImageBackground
             blurRadius={30}
             style={styles.background}
@@ -153,7 +153,6 @@ function LoginScreen(props) {
       {/* Button */}
       <AppButton
         buttonDisabled={buttonDisabled}
-        buttonColor={buttonDisabled ? colors.primaryLight : colors.primary}
         onPress={function () {
           if (!buttonDisabled) {
             authContext.onLogIn(email, password);
@@ -172,7 +171,7 @@ function LoginScreen(props) {
             style={styles.errorIcon}
           />
           <AppText
-            type="mediumNormal"
+            type="mediumBold"
             color={colors.red}
             style={{ flex: 1, flexWrap: "wrap" }}
           >
@@ -181,12 +180,14 @@ function LoginScreen(props) {
         </RowView>
       )}
 
+
+
       {/* Footer to Sign Up */}
       <View style={styles.footer}>
-        <AppText type="smallNormal" style={{ color: colors.grey }}>
-          Dont' have an account?{" "}
+        <AppText type="mediumBold" style={{ color: colors.white }}>
+          Don't have an account?{"   "}
           <AppText
-            type="smallBold"
+            type="mediumExtraBold"
             style={{ color: colors.primary }}
             onPress={() => {
               props.navigation.navigate("Register");
@@ -197,18 +198,20 @@ function LoginScreen(props) {
         </AppText>
       </View>
       </ImageBackground>
-    </Screen>
+    
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    // Size
-    // Layout
-    alignItems: "center",
-    // Boundaries
-    // Fill
-  },
+  // container: {
+  //   // Size
+  //   // Layout
+  //   alignItems: "center",
+  //   margin: 0, 
+  //   padding: 0
+  //   // Boundaries
+  //   // Fill
+  // },
   background: {
         flex: 1,
         width: "100%",
@@ -239,12 +242,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
-    bottom: 0,
+    bottom: 10,
     // Border
-    borderTopColor: colors.lightgrey,
-    borderWidth: 1,
-    // Fill
-    backgroundColor: colors.offwhite,
+    borderTopColor: colors.white,
+    borderTopWidth: 1,
   },
 });
 

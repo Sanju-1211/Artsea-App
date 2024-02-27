@@ -9,11 +9,12 @@ import Loading from "../components/Loading";
 import AppButton from "../components/AppButton";
 import { AuthContext } from "../services/auth/AuthContext";
 import { FlatList } from "react-native-gesture-handler";
+import OrderItem from "../components/OrderItem";
 
 function BuyerProfileScreen() {
     const authContext = useContext(AuthContext);
-    const [orderItems, setOrderItems] = useState(null);
-
+    const [orders, setOrders] = useState(null);
+    const [items, setItems] = useState(null)
     const [userDetails, setUserDetails] = useState(null)
     const dimensions = useWindowDimensions()
 
@@ -40,6 +41,8 @@ function BuyerProfileScreen() {
         getUserDetails()
     },[])
 
+
+    
     useEffect(() => {
         const user = firebase.auth().currentUser;
         if (user) {
@@ -47,10 +50,30 @@ function BuyerProfileScreen() {
           // Listen for real-time updates with .onSnapshot()
           const unsubscribe = ordersRef.onSnapshot(doc => {
             if (doc.exists) {
-              setOrderItems(doc.data().items);
+                console.log('Got the orders document')
+                const allOrders = doc.data()['orders']
+              setOrders(allOrders);
+
+              // flatMap is used instead of map followed by flat. 
+              // flatMap first maps each element using the mapping function, then flattens the result into a new array. It's more efficient than doing a separate map and flat.
+              // Map each order to a new array of items, each with the status property added,
+            // then flatten the resulting array of arrays into a single array of items.
+              const allItemsWithStatus = allOrders.flatMap(order =>
+                    order.items.map(item => ({
+                        ...item, // Spread operator to copy all properties of the item
+                        status: order.status, // Add the status property from the order
+                        arrivingBy: order.arrivingBy
+                    }))
+                    );
+
+              setItems(allItemsWithStatus)
+              console.log(`orders: ${JSON.stringify(orders)}`)
+            //   console.log(`orders.length: ${orders.length}`)
             } else {
               console.log("No such document");
-              setOrderItems([]); // Clear order items if the document doesn't exist
+              setOrders([]); // Clear order items if the document doesn't exist
+             console.log(`orders: ${JSON.stringify(orders)}`) 
+            //  console.log(`orders.length: ${orders.length}`)
             }
           }, error => {
             console.error('Error fetching order items: ', error);
@@ -61,13 +84,9 @@ function BuyerProfileScreen() {
         }
       }, []);
 
-    if (userDetails){
+    if ((userDetails !== null) && (orders?.length) && (items?.length)){
         return (
             <Screen style={styles.screen}>
-                <View style={styles.headingContainer}>
-                    <AppText style={styles.heading}>Profile</AppText>
-                </View>
-    
                 <View style={styles.UserCardHeader}>
                     <UserCard
                     image={{uri: userDetails.image}}
@@ -77,10 +96,7 @@ function BuyerProfileScreen() {
                     imageStyle = {styles.imageStyle}
                     />
                 </View>
-                <View >
-                    <AppText style={styles.UserDescription}>
-                        User Type : {userDetails.type}
-                    </AppText>                             
+                <View >                         
                 </View> 
 
                           <AppButton
@@ -94,21 +110,25 @@ function BuyerProfileScreen() {
             }}
             onPress={() => authContext.onLogout()}
             text="Logout"
-          />     
-          {(orderItems.length > 0)? (<FlatList
-          data={orderItems}
-          keyExtractor={(item) => item.image.toString()}
+          />    
+          <View style={styles.section}>
+      {(items?.length > 0)? (<FlatList
+          data={items}
+          keyExtractor={(item) => `${item.image}${Math.random()}`}
           renderItem={({ item }) => (
-            <orderItem
+            <OrderItem
               item={item}
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemoveItem={handleRemoveItem}
+              onUpdateQuantity={()=>{}}
+              onRemoveItem={()=>{}}
               style={{width: "5"}}
             />
           )}
         />):(<View><AppText>
-        There are no items in your order yet. 
-     </AppText></View>)}  
+        There are no items in your cart yet. 
+     </AppText></View>)}
+        </View>
+
+         
             </Screen>
         );
     } else {
