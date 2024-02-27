@@ -1,109 +1,3 @@
-// import React from "react";
-// import { View, StyleSheet } from "react-native";
-
-// import Screen from "../components/Screen";
-// import AppText from "../components/AppText";
-// import AppButton from "../components/AppButton";
-// import ItemListing from "../components/ItemListing";
-
-// const listings = [
-//     {
-//       id: 1,
-//       title: "Red jacket for sale",
-//       price: 100,
-//       image: require("../assets/jacket.jpg"),
-//     },
-//     {
-//       id: 2,
-//       title: "Couch in great condition",
-//       price: 1000,
-//       image: require("../assets/couch.jpg"),
-//     },
-//     {
-//       id: 3,
-//       title: "Red jacket for sale",
-//       price: 100,
-//       image: require("../assets/jacket.jpg"),
-//     },
-//     {
-//       id: 4,
-//       title: "Couch in great condition",
-//       price: 1000,
-//       image: require("../assets/couch.jpg"),
-//     },
-//     {
-//       id: 5,
-//       title: "Red jacket for sale",
-//       price: 100,
-//       image: require("../assets/jacket.jpg"),
-//     },
-//     {
-//       id: 6,
-//       title: "Couch in great condition",
-//       price: 1000,
-//       image: require("../assets/couch.jpg"),
-//     },
-//     {
-//       id: 7,
-//       title: "Couch in great condition",
-//       price: 1000,
-//       image: require("../assets/couch.jpg"),
-//     },
-//     {
-//       id: 8,
-//       title: "Couch in great condition",
-//       price: 1000,
-//       image: require("../assets/couch.jpg"),
-//     },    
-// ];
-
-// function CheckoutScreen({navigation}) {
-//     return (
-//         <Screen>
-// 			<AppText style={styles.cartHeader}>Cart</AppText>
-// 			<AppButton text="Proceed To Buy" 
-// 				onPress={()=>console.log("Message button pressed")} 
-// 				buttonStyle={styles.buyButton}
-// 			/>  
-//           	<View style={{marginBottom:200, flexDirection:"row"}}>
-// 				<ItemListing 
-//                     navigation={navigation}
-// 					numOfColumns={1} 
-// 					showIcons={false} 
-// 					imageStyle={styles.itemImageStyle} 
-// 					itemCardStyle={styles.cardStyle}
-// 				/>
-// 			</View>
-//         </Screen>
-//     );
-// }
-
-// const styles = StyleSheet.create({
-//     cartHeader:{
-// 		fontSize: 20,
-// 		textAlign:"center",
-// 		marginTop: 10,
-// 		marginBottom: 10
-//     },
-//     cardStyle:{
-// 		flexDirection:"row",
-// 		marginBottom: 2
-//     },
-//     buyButton:{
-// 		marginRight: 5,
-// 		height: 40,
-// 		marginBottom:10,
-// 		padding: 8,
-// 	},  
-// 	itemImageStyle: {
-// 		width: 100,
-// 		height: 100,
-// 	},
-
-// });
-// export default CheckoutScreen;
-
-
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, StyleSheet, Alert } from 'react-native';
 import CartItem from '../components/CartItem';
@@ -294,22 +188,37 @@ const CheckoutScreen = () => {
     }
   }
 
+
   const placeOrder = async () => {
     const user = firebase.auth().currentUser;
     
     if (user && cartItems.length > 0) {
-      const orderRef = firebase.firestore().collection('orders').doc();
+      const orderRef = firebase.firestore().collection('orders').doc(user.uid);
       const cartRef = firebase.firestore().collection('carts').doc(user.uid);
+      const now = new Date();
+      const timestamp = firebase.firestore.Timestamp.fromDate(now)
   
       try {
         await firebase.firestore().runTransaction(async (transaction) => {
-          // Create a new order document
-          transaction.set(orderRef, {
+          const ordersDoc = await transaction.get(orderRef)
+          const newOrder = {
             userId: user.uid,
             items: cartItems,
             status: 'pending',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          });
+            createdAt: timestamp,
+          }
+
+          if (!ordersDoc.exists){
+            transaction.set(orderRef, {
+              // If the user's order document doesn't exist, create it and initialize the 'orders' array
+              orders: [newOrder]
+            })
+          } else {
+            // If it exists, append the new order to the 'orders' array 
+            transaction.update(orderRef, {
+              orders: firebase.firestore.FieldValue.arrayUnion(newOrder)
+            })
+          }
   
           // Clear the cart items
           transaction.update(cartRef, {
@@ -474,7 +383,7 @@ const CheckoutScreen = () => {
   
             <View style={styles.separator}></View>
   
-        <AppButton text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
+        <AppButton buttonDisabled={cartItems.length == 0 || !currentAddress} text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
       </ScrollView>
       
     

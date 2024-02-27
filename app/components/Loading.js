@@ -14,6 +14,9 @@ function Loading(props) {
 
 const styles = StyleSheet.create({
   loading: {
+    flex: 1,
+    backgroundColor: "white",
+    width: "100%", 
     justifyContent: "center",
     alignSelf: "center",
   },
