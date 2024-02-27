@@ -114,7 +114,7 @@ import AppText from '../components/AppText';
 import Screen from '../components/Screen';
 import { ScrollView } from 'react-native-gesture-handler';
 import { StripeProvider, usePaymentSheet } from "@stripe/stripe-react-native";
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Loading from '../components/Loading';
 import RowView from '../components/RowView';
 import colors from '../config/colors';
@@ -131,6 +131,7 @@ const CheckoutScreen = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [cartTotal, setCartTotal] = useState(0)
   const [savedAddresses, setSavedAddresses] = useState([]);
+  const navigation = useNavigation()
 
 
   // Stripe
@@ -343,7 +344,7 @@ const CheckoutScreen = () => {
           const addresses = userData.addresses || []; // assuming 'addresses' is an array property of the user document
           // Do something with the addresses, like setting state
           console.log(addresses);
-          // setSavedAddresses(addresses)
+          setSavedAddresses(addresses)
         } else {
           console.log("User document doesn't exist");
           // Handle case where user document doesn't exist
@@ -357,25 +358,6 @@ const CheckoutScreen = () => {
     }
   }, []);
   
-  
-  const saveAddressToFirestore = async (address) => {
-    const user = firebase.auth().currentUser;
-  
-    if (user) {
-      const userRef = firebase.firestore().collection('users').doc(user.uid);
-  
-      try {
-        // Here, 'set' with merge: true will update the user document with the new address
-        // without overwriting other fields.
-        await userRef.set({ address: address }, { merge: true });
-        console.log('Address saved successfully');
-      } catch (error) {
-        console.error('Error saving address: ', error);
-      }
-    } else {
-      console.log('No user logged in');
-    }
-  };
   
 
   const calculateTotals = (items) => {
@@ -415,11 +397,19 @@ const CheckoutScreen = () => {
           {savedAddresses[0].address}
         </AppText>
         </View>
-        <AppButton text="Change" width={100} height={50} borderRadius={10}/>
+        <AppButton text="Change" width={100} height={50} borderRadius={10}
+         onPress={()=>{
+          navigation.navigate("AddressesScreen", {addresses: savedAddresses})
+        }}
+        />
         </RowView>
         ):(<View style={{alignItems: "center"}}>
           <AppText type={"smallBold"}>You have no address saved.</AppText>
-          <AppButton text="Add Address" width={200} height={50} borderRadius={10}/>
+          <AppButton text="Add Address" width={200} height={50} borderRadius={10}
+            onPress={()=>{
+              navigation.navigate("AddressesScreen", {addresses: savedAddresses})
+            }}
+          />
           </View>)}
         </View>
 
@@ -477,6 +467,8 @@ const CheckoutScreen = () => {
 
       <AppButton text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
     </ScrollView>
+    
+  
     </Screen>
     // </StripeProvider>
   );

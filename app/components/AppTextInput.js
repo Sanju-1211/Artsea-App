@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
   },
   textInputStyle: {
     width: "100%",
+    height: 30,
     fontFamily: "Helvetica Neue",
     color: colors.black,
     fontWeight: "400",
