@@ -93,7 +93,7 @@ export default function AppButton({
           width: width ? width : 350,
           height: height ? height : 50,
           opacity: buttonDisabled ? 0.7 : 1,
-          backgroundColor: buttonColor ? buttonColor : colors.primaryLight,
+          backgroundColor: buttonColor ? buttonColor : colors.primary,
           borderRadius: borderRadius? borderRadius : 10,
         },
         style,

@@ -127,10 +127,12 @@ import colors from '../config/colors';
 
 const CheckoutScreen = () => {
 
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(null);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [cartTotal, setCartTotal] = useState(0)
-  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [savedAddresses, setSavedAddresses] = useState(null);
+  const [currentAddress, setCurrentAddress] = useState({})
+  console.log(`currentAddress: ${currentAddress}`)
   const navigation = useNavigation()
 
 
@@ -345,6 +347,8 @@ const CheckoutScreen = () => {
           // Do something with the addresses, like setting state
           console.log(addresses);
           setSavedAddresses(addresses)
+          setCurrentAddress(addresses.find(address => address.selected === true))
+          console.log(`currentAddress: ${JSON.stringify(currentAddress)}`)
         } else {
           console.log("User document doesn't exist");
           // Handle case where user document doesn't exist
@@ -373,105 +377,117 @@ const CheckoutScreen = () => {
   }, [cartItems]);
 
 
-  if (!cartItems){
-    return <Screen>
-      <AppText>
-        There are no items in your cart yet. 
-      </AppText>
-    </Screen>
-  } 
-  return (
-    // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
-    <Screen style={styles.container}>
-    <ScrollView style={styles.container}>
-      {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
-      {/* <AddressForm onSave={saveAddressToFirestore} /> */}
-      <View style={styles.section}>
-      {(savedAddresses.length > 0)? (
-        <RowView style={{justifyContent: "space-between"}}>
-      <View>
-        <AppText type={"smallNormal"}>Deliver To:
-          <AppText type={"smallBold"}> {savedAddresses[0].name},{savedAddresses[0].pincode}</AppText>
-        </AppText>
-        <AppText type={"smallLight"} numberOfLines={1}>
-          {savedAddresses[0].address}
-        </AppText>
-        </View>
-        <AppButton text="Change" width={100} height={50} borderRadius={10}
-         onPress={()=>{
-          navigation.navigate("AddressesScreen", {addresses: savedAddresses})
-        }}
-        />
-        </RowView>
-        ):(<View style={{alignItems: "center"}}>
-          <AppText type={"smallBold"}>You have no address saved.</AppText>
-          <AppButton text="Add Address" width={200} height={50} borderRadius={10}
-            onPress={()=>{
-              navigation.navigate("AddressesScreen", {addresses: savedAddresses})
-            }}
+  // if (!cartItems){
+  //   return <Screen>
+  //     <AppText>
+  //       There are no items in your cart yet. 
+  //     </AppText>
+  //   </Screen>
+  // } 
+  // if saved address and cart items are not null
+  if (savedAddresses && cartItems){
+    console.log(`savedAddresses is not null: ${JSON.stringify(savedAddresses)}`)
+    console.log(`cartItems is not null: ${JSON.stringify(cartItems)}`)
+    return (
+      // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
+      <Screen style={styles.container}>
+      <ScrollView style={styles.container}>
+        {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
+        {/* <AddressForm onSave={saveAddressToFirestore} /> */}
+        <View style={styles.section}>
+        {(savedAddresses.length > 0)? (
+          <RowView style={{justifyContent: "space-between"}}>
+        <View>
+          <AppText type={"smallNormal"}>Deliver To:
+            <AppText type={"smallBold"}> {currentAddress.name},{currentAddress.pincode}</AppText>
+          </AppText>
+          <AppText type={"smallLight"} numberOfLines={1}>
+            {currentAddress.address}
+          </AppText>
+          </View>
+          <AppButton text="Change" width={100} height={50} borderRadius={10}
+           onPress={()=>{
+            navigation.navigate("AddressesScreen", {addresses: savedAddresses})
+          }}
           />
-          </View>)}
-        </View>
-
-  <View style={styles.separator}></View>
-        
-  <View style={styles.section}>
-      <FlatList
-        data={cartItems}
-        keyExtractor={(item) => item.image.toString()}
-        renderItem={({ item }) => (
-          <CartItem
-            item={item}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveItem}
-            style={{width: "5"}}
-          />
-        )}
-      />
-      </View>
-
-      
-    <View style={styles.separator}></View>
-
-    <View style={styles.section}>
-        <AppText type="h3Bold">Your total</AppText>
-    </View>
-    
-    <View style={styles.section}>
-      <RowView style={styles.checkoutRow}>
-        <AppText type="mediumNormal">Items Total</AppText>
-        <AppText type="mediumNormal">₹ {cartTotal}</AppText>
-      </RowView>
-
-    <RowView style={styles.checkoutRow}>
-      <AppText
-        type="mediumNormal"
-        style={{ textDecorationLine: "underline" }}
-      >
-        Taxes
-      </AppText>
-
-      <AppText type="mediumNormal">
-      ₹ {Math.floor(cartTotal * 0.18)}
-      </AppText>
-      
-    </RowView>
-
-    <RowView style={styles.checkoutRow}>
-      <AppText type="mediumSemiBold">Total</AppText>
-      <AppText type="mediumNormal">₹ {cartTotal + cartTotal*0.18}</AppText>
-    </RowView>
-  </View>
-
-          <View style={styles.separator}></View>
-
-      <AppButton text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
-    </ScrollView>
-    
+          </RowView>
+          ):(<View style={{alignItems: "center"}}>
+            <AppText type={"smallBold"}>You have no address saved.</AppText>
+            <AppButton text="Add Address" width={200} height={50} borderRadius={10}
+              onPress={()=>{
+                navigation.navigate("AddressesScreen", {addresses: savedAddresses})
+              }}
+            />
+            </View>)}
+          </View>
   
-    </Screen>
-    // </StripeProvider>
-  );
+    <View style={styles.separator}></View>
+          
+    <View style={styles.section}>
+      {(cartItems.length > 0)? (<FlatList
+          data={cartItems}
+          keyExtractor={(item) => item.image.toString()}
+          renderItem={({ item }) => (
+            <CartItem
+              item={item}
+              onUpdateQuantity={handleUpdateQuantity}
+              onRemoveItem={handleRemoveItem}
+              style={{width: "5"}}
+            />
+          )}
+        />):(<View><AppText>
+        There are no items in your cart yet. 
+     </AppText></View>)}
+        </View>
+
+      <View style={styles.separator}></View>
+  
+      <View style={styles.section}>
+          <AppText type="h3Bold">Your total</AppText>
+      </View>
+      
+      <View style={styles.section}>
+        <RowView style={styles.checkoutRow}>
+          <AppText type="mediumNormal">Items Total</AppText>
+          <AppText type="mediumNormal">₹ {cartTotal}</AppText>
+        </RowView>
+  
+      <RowView style={styles.checkoutRow}>
+        <AppText
+          type="mediumNormal"
+          style={{ textDecorationLine: "underline" }}
+        >
+          Taxes
+        </AppText>
+  
+        <AppText type="mediumNormal">
+        ₹ {Math.floor(cartTotal * 0.18)}
+        </AppText>
+        
+      </RowView>
+  
+      <RowView style={styles.checkoutRow}>
+        <AppText type="mediumSemiBold">Total</AppText>
+        <AppText type="mediumNormal">₹ {cartTotal + cartTotal*0.18}</AppText>
+      </RowView>
+    </View>
+  
+            <View style={styles.separator}></View>
+  
+        <AppButton text="Order & Pay on Delivery" onPress={placeOrder} style={{padding: 16}}/>
+      </ScrollView>
+      
+    
+      </Screen>
+      // </StripeProvider>
+    );
+  } else {
+    <Loading/>
+
+  }
+
+
+  
 };
 
 const styles = StyleSheet.create({

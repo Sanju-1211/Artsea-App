@@ -7,6 +7,9 @@ import AppText from '../components/AppText';
 import firebase from 'firebase/compat';
 import { ScrollView } from 'react-native-gesture-handler';
 import colors from '../config/colors';
+import { RadioButton } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+
 
 function toTitleCase(str) {
     return str.replace(
@@ -24,32 +27,60 @@ function AddAddressScreen() {
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [alias, setAlias] = useState('')
+    const navigation = useNavigation()
+    
 
-    const saveAddressToFirestore = async () => {
+      const saveAddressToFirestore = async () => {
+        // Get the current user 
         const user = firebase.auth().currentUser;
     
+        // if the user exists 
         if (user) {
-          const userRef = firebase.firestore().collection('users').doc(user.uid);
-          try {
-            // Here, 'update' will add the new address to the 'addresses' array in the user document
-            await userRef.update({
-              addresses: firebase.firestore.FieldValue.arrayUnion({
-                name: toTitleCase(formData.name),
-                mobile: formData.mobileNumber,
-                pincode: formData.pinCode,
-                address: toTitleCase(formData.address),
-                city: toTitleCase(formData.city),
-                alias: toTitleCase(formData.alias)
-              })
-            });
-            console.log('Address saved successfully');
-          } catch (error) {
-            console.error('Error saving address: ', error);
-          }
+            // get their user document from firestore
+            const userRef = firebase.firestore().collection('users').doc(user.uid);
+            try {
+                // Let's start an transaction in the background
+                await firebase.firestore().runTransaction(async (transaction) => {
+                    // Get the current user's document 
+                    const userDoc = await transaction.get(userRef);
+
+                    // If the current user's document doesn't exist 
+                    // raise an error
+                    if (!userDoc.exists) {
+                        throw "User document does not exist!";
+                    }
+    
+                    // Get the data within the user's document 
+                    const userData = userDoc.data();
+
+                    // Save the new address to a variable 
+                    const newAddress = {
+                        name: toTitleCase(formData.name),
+                        mobile: formData.mobileNumber,
+                        pincode: formData.pinCode,
+                        address: toTitleCase(formData.address),
+                        city: toTitleCase(formData.city),
+                        alias: toTitleCase(formData.alias),
+                        selected: true,
+                    };
+    
+                    // If there are existing addresses, set their 'selected' to false
+                    let updatedAddresses = userData.addresses ? userData.addresses.map(address => ({ ...address, selected: false })) : [];
+                    // Add the new address to the updated Addresses
+                    updatedAddresses.push(newAddress);
+    
+                    // Update the document within the transaction
+                    transaction.update(userRef, { addresses: updatedAddresses });
+                });
+                console.log('Addresses saved successfully');
+            } catch (error) {
+                console.error('Error saving address: ', error);
+            }
         } else {
-          console.log('No user logged in');
+            console.log('No user logged in');
         }
-      };
+    };
+    
 
     const [formData, setFormData] = useState({
         mobileNumber: '',
@@ -98,6 +129,7 @@ function AddAddressScreen() {
       saveAddressToFirestore();
       console.log('Form data submitted', formData);
     }
+    navigation.navigate("CheckoutScreen")
   };
     
       const handleInputChange = (name, value) => {
@@ -118,6 +150,9 @@ function AddAddressScreen() {
     <Screen>
         <ScrollView showsVerticalScrollIndicator={false}>
     <View>
+        <AppText type={"h3Bold"} style={{marginBottom: 8}}>
+          Add Address
+        </AppText>
       <AppText type={"mediumBold"}>Contact Details</AppText>
       <AppTextInput
         placeholder="Name"
