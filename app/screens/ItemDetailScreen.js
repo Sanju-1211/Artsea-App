@@ -137,7 +137,10 @@ export default function ItemDetailScreen(props) {
 
   return (
     <Screen style={{ ...styles.container, width: WIDTH }}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContinaerStyle={{flexGrow: 1}}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContinaerStyle={{ flexGrow: 1 }}
+      >
         <FlatList
           // data is the list of items
           data={item.images}
@@ -386,27 +389,47 @@ export default function ItemDetailScreen(props) {
                         elevation: 2,
                       }}
                     >
-                      <RowView>
-                        <Image
-                          style={{
-                            width: 50,
-                            height: 50,
-                            borderRadius: 25,
-                            borderColor: "lightgrey",
-                            borderWidth: 1,
-                            marginRight: 20,
-                            marginVertical: 10,
-                          }}
-                          source={{ uri: review.buyer_image }}
-                        />
-                        <View>
-                          <AppText type="mediumBold">
-                            {review.buyer_name}
+                      <RowView
+                        style={{
+                          justifyContent: "space-between",
+                          marginRight: 5,
+                        }}
+                      >
+                        <RowView>
+                          <Image
+                            style={{
+                              width: 50,
+                              height: 50,
+                              borderRadius: 25,
+                              borderColor: "lightgrey",
+                              borderWidth: 1,
+                              marginRight: 20,
+                              marginVertical: 10,
+                            }}
+                            source={{ uri: review.buyer_image }}
+                          />
+                          <View>
+                            <AppText type="mediumBold">
+                              {review.buyer_name}
+                            </AppText>
+                            <AppText type="smallNormal">
+                              {review.review_date}
+                            </AppText>
+                          </View>
+                        </RowView>
+                        <RowView>
+                          <AppIcon
+                            iconSet={"Entypo"}
+                            iconName={"star"}
+                            iconSize={13}
+                            style={styles.icon}
+                          />
+                          <AppText
+                            style={{ marginVertical: 8, color: "black" }}
+                          >
+                            {item.rating}
                           </AppText>
-                          <AppText type="smallNormal">
-                            {review.review_date}
-                          </AppText>
-                        </View>
+                        </RowView>
                       </RowView>
                       <AppText type="mediumNormal" numberOfLines={6}>
                         {review.review_text}
