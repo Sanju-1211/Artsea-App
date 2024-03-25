@@ -438,7 +438,7 @@ const CheckoutScreen = () => {
 
           <View style={styles.separator}></View>
 
-          {cartItems.length == 0 || !currentAddress.name!=null ?
+          {cartItems.length == 0 || currentAddress.name==null ?
           <AppButton
             buttonDisabled="true"
             text="Order & Pay on Delivery"
