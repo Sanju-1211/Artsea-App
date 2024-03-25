@@ -101,18 +101,20 @@ const AddressesScreen = (props) => {
 
         if (cartAddressStr === removedAddressStr) {
           transaction.update(cartDocRef, { address: {} });
-          
-          const updatedAddresses = addresses.filter(
-            (address) => address !== removedAddressStr
-          );
-
-          //addresses = updatedAddresses;
-          setSavedAddresses(updatedAddresses);
-
-          transaction.update(userDocRef, { addresses: updatedAddresses });
-        } else {
-          console.log("Cart address not matching withs selected address");
+        }else {
+            console.log("Cart address not matching withs selected address");
         }
+        
+        
+        const updatedAddresses = addresses.filter(
+        (address) => address !== removedAddress
+        );
+
+        //addresses = updatedAddresses;
+        setSavedAddresses(updatedAddresses);
+
+        transaction.update(userDocRef, { addresses: updatedAddresses });
+        
       });
     } catch (error) {
       console.error("Error removing address:", error);
