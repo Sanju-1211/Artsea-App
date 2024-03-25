@@ -1,78 +1,66 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, FlatList, View } from "react-native";
 import UserCard from "../components/UserCard";
+import firebase from "firebase/compat";
+import { Avatar } from "react-native-paper";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-const followingUsers = [
-  {
-    id: 1,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-  {
-    id: 2,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-  {
-    id: 3,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-  {
-    id: 4,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-  {
-    id: 5,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-  {
-    id: 6,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-  {
-    id: 7,
-    title: "Mosh Hamedani",
-    subTitle: "@Mosh",
-    image: require("../assets/mosh.jpg")
-  },
-];
+function Following({ navigation }) {
+  const [userDetails, setUserDetails] = useState(null);
 
-function Following({navigation}) {
+  useEffect(() => {
+    async function getUserDetails() {
+      try {
+        const currentUser = firebase.auth().currentUser;
+        const docRef = firebase
+          .firestore()
+          .collection("users")
+          .doc(currentUser.uid);
+        const doc = await docRef.get();
+
+        if (doc.exists) {
+          console.log("User document data:", doc.data().following);
+          setUserDetails(doc.data());
+        } else {
+          console.log("No such document");
+          return null;
+        }
+      } catch (error) {
+        console.error("Error fetching current user's document:", error);
+      }
+    }
+    getUserDetails();
+  }, []);
+  if (userDetails) {
     return (
-        <FlatList
-        data={followingUsers}
-        keyExtractor={(item, index) => item.id.toString()}
+      <FlatList
+        data={userDetails.following}
+        keyExtractor={(item, index) => item.uid.toString()}
         renderItem={({ item, index }) => {
-            const lastItem = index === followingUsers.length - 1;
-            return (
+          console.log(userDetails);
+          console.log(item);
+          const lastItem = index === userDetails.following.length - 1;
+          return (
+            <View style={{paddingBottom:5,paddingTop:5}}>
                 <UserCard
-                    image={item.image}
-                    title={item.title}
-                    subTitle={item.subTitle}
-                    userCardStyle={styles.userCardStyle}
-                    onPress={() => navigation.navigate("ArtisanDetail")}
-                />                      
-            )
+                image={item.image}
+                title={item.full_name}
+                subTitle={item.username}
+                onPress={() => {
+                    navigation.navigate("ArtisanDetail", {
+                    screen: "ArtisanDetailScreen",
+                    params: { artistUserId: item.uid },
+                    });
+                }}
+                />
+            </View>
+          );
         }}
-        />
+      />
     );
+  }
 }
 
-const styles = StyleSheet.create({
-    userCardStyle:{
-        marginTop: 10,
-        marginBottom: 10
-    }
-});
+const styles = StyleSheet.create({});
 
 export default Following;

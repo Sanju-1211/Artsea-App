@@ -52,7 +52,7 @@ function HomeScreen({navigation}) {
 			<Screen>
 				<View style={styles.headerStyle}>
 					<Image style={[styles.logo]} source={require("../assets/AppLogoBlack.png")} />
-					{/* <View style={styles.headerFilter}>
+					<View style={styles.headerFilter}>
 						<TouchableOpacity onPress={exploreClicked}>
 							{
 							highlightExplore ?
@@ -68,13 +68,11 @@ function HomeScreen({navigation}) {
 							}
 						</TouchableOpacity>
 					</View>
-	 */}
-					{/* <TouchableOpacity onPress={() => navigation.navigate("Search")}>
-						<Feather name="search" size={22} color={colors.primaryText} />
-					</TouchableOpacity> */}
+	                <View style={styles.headerFilter2}></View>
+
 				</View>
-				{/* {
-					highlightExplore &&  */}
+				{ 
+					highlightExplore &&  
 					<View style={{marginBottom:100, flexDirection:"row"}}>
 						<ItemListing 
 							navigation={navigation} 
@@ -83,10 +81,10 @@ function HomeScreen({navigation}) {
 							listStyle={styles.listStyle}
 							items={artItems}/>
 					</View>
-				{/* } */}
-				{/* {
+				}
+				{ 
 					highlightFollowing && <Following navigation={navigation}/>
-				} */}
+				}
 			</Screen>
 		  );
 	} else {
@@ -118,16 +116,21 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-around",
 		alignItems: "baseline",
-		flex: 0.65
+		flex:0.65
+	},
+    headerFilter2: {
+		flex:0.1
 	},
 	headerFilterStyle: {
 		fontWeight: "bold",
 		fontSize: 16,
-		color: colors.shade
+		color: colors.grey
 	},
 	headerFilterStyleHighlight: {
 		fontWeight: "bold",
 		fontSize: 16,
+        borderBottomWidth: 1,
+        paddingBottom:2
 	},
 	listStyle:{
 		flex: 0.5, 

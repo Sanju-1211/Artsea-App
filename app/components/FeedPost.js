@@ -369,7 +369,7 @@ function FeedPost(props) {
               showsHorizontalScrollIndicator={false}
               snapToInterval={WIDTH}
               snapToAlignment="center"
-              decelerationRate="fast"
+              decelerationRate='fast'
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => renderMedia(item)}
               viewabilityConfig={viewabilityConfig}

@@ -77,6 +77,7 @@ items}) {
 							subTitle={"₹" + item.price}
 							image={item.image}
 							imageStyle={imageStyle}
+                            item={item}
               onPress={() => {
                 console.log(`Sending ${JSON.stringify(item)} to ItemDetails Screen`)
                 navigation.navigate("ItemDetails", { item: item })

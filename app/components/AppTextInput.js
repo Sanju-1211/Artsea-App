@@ -43,7 +43,7 @@
 // TODO: Might help if you use TextInput from basic react native components. Easier to manipulate and
 // understand.
 import React, { useEffect, useRef } from "react";
-import { View, TextInput, StyleSheet, Keyboard } from "react-native";
+import { View, TextInput, StyleSheet, Keyboard, Platform } from "react-native";
 import colors from "../config/colors";
 import AppIcon from "./AppIcon";
 
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   textInputStyle: {
     width: "100%",
     height: 50,
-    fontFamily: "Helvetica Neue",
+    fontFamily: Platform.OS === 'ios' ? 'Helvetica Neue' : 'Roboto',
     color: colors.black,
     fontWeight: "400",
     fontSize: 16,

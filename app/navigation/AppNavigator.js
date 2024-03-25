@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform, View } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons , Entypo} from '@expo/vector-icons';
 import colors from '../config/colors';
 import HomeScreenNavigator from './HomeScreenNavigator';
 import AddItemScreenNavigator from './AddItemScreenNavigator';
@@ -13,6 +13,7 @@ import SellerProfileScreenNavigator from './SellerProfileScreenNavigator';
 import BuyerProfileScreenNavigator from './BuyerProfileScreenNavigator';
 import { AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import WishListScreenNavigator from './WishListScreenNavigator';
 
 const Tab = createBottomTabNavigator();
 const seller=false;
@@ -60,8 +61,28 @@ function AppNavigator() {
                         </View>
                         ),
                     }} 
-                    />            
-        
+                    />         
+
+            <Tab.Screen name="WishList" 
+                        component={WishListScreenNavigator} 
+                        options={{
+                            tabBarIcon: ({focused}) => (
+                            <View
+                                >
+                                    {focused?(
+                                        <Entypo name="heart" size={24} color="#E34290" />
+                                                                       
+                                    ) : (
+                                        
+                                        <Entypo name="heart-outlined" size={24} color={colors.black} /> 
+                                    )}
+                                    
+						            
+                            </View>
+                            ),
+                        }} 
+                        />   
+
             <Tab.Screen name="BuyerProfile" 
                         component={BuyerProfileScreenNavigator} 
                         options={{
