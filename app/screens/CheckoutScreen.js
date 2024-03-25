@@ -25,7 +25,7 @@ const CheckoutScreen = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [cartTotal, setCartTotal] = useState(0);
   const [savedAddresses, setSavedAddresses] = useState(null);
-  const [currentAddress, setCurrentAddress] = useState({});
+  const [currentAddress, setCurrentAddress] = useState(null);
   console.log(`currentAddress: ${currentAddress}`);
   const navigation = useNavigation();
 
@@ -104,9 +104,11 @@ const CheckoutScreen = () => {
         (doc) => {
           if (doc.exists) {
             setCartItems(doc.data().items);
+            if(doc.data().address){
             setCurrentAddress(
                 doc.data().address
             );
+            }
           } else {
             console.log("No such document");
             setCartItems([]); // Clear cart items if the document doesn't exist
@@ -331,7 +333,7 @@ const CheckoutScreen = () => {
           {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
           {/* <AddressForm onSave={saveAddressToFirestore} /> */}
           <View style={styles.section}>
-            {savedAddresses.length > 0 && currentAddress ? (
+            {savedAddresses.length > 0 && currentAddress.name!=null ? (
               <RowView style={{ justifyContent: "space-between" }}>
                 
                 
@@ -436,13 +438,12 @@ const CheckoutScreen = () => {
 
           <View style={styles.separator}></View>
 
-          {cartItems.length == 0 || !currentAddress ?
+          {cartItems.length == 0 || !currentAddress.name!=null ?
           <AppButton
             buttonDisabled="true"
             text="Order & Pay on Delivery"
           />:
           <AppButton
-            buttonDisabled="false"
             text="Order & Pay on Delivery"
             onPress={placeOrder}
           />
