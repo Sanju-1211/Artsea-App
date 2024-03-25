@@ -43,6 +43,12 @@ function AddReviewScreen(props) {
     }, []);
 
     const saveReviewToFirestore = async () => {
+        const now = new Date();
+        const reviewDate = now.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
         const artItemsRef = firebase.firestore().collection("art").where('image', '==', item.image)
         artItemsRef.get().then((querySnapshot) => {
             querySnapshot.forEach((doc) => {
@@ -53,6 +59,7 @@ function AddReviewScreen(props) {
                     review_text: formData.review_text,
                     buyer_image: userDetails.image,
                     buyer_name: userDetails.full_name,
+                    review_date: reviewDate
                 };
 
                 let artReview = artItem.reviews ? artItem.reviews : [];
@@ -61,13 +68,20 @@ function AddReviewScreen(props) {
 
                 artItem.reviews = artReview;
 
+                let avgRating = 0;
+                artReview.forEach((review) => { 
+                    avgRating = avgRating + review.rating;
+                });
+                artItem.rating = (avgRating/artReview.length).toFixed(2);;
+                console.log(artItem.rating);
                 doc.ref.update(artItem);
+                
             });
         });
     };
 
     const [formData, setFormData] = useState({
-        rating: "",
+        rating: 0,
         review_text: "",
     });
     const [errors, setErrors] = useState({});

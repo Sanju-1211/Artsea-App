@@ -16,25 +16,23 @@ function HomeScreen({navigation}) {
 	// Add state variable to keep track of new items uploaded for selling
 	const [artItems, setArtItems] = useState(null)
 
-	// Firestore 
-	const db = firebase.firestore()
-	const artItemsRef = db.collection("art")
-
-	useEffect(()=>{
-		artItemsRef.get().then((querySnapshot) => {
+    useEffect(() => {
+      const userRef = firebase.firestore().collection("art");
+      const unsubscribe = userRef.onSnapshot(
+        (querySnapshot) => {
 			let artItemsData = [];
 			querySnapshot.forEach((doc) => {
 			  artItemsData.push(doc.data());
 			});
 			setArtItems(artItemsData);
-		  }).catch(error => {
-			console.error("Error fetching art items: ", error);
-		  });
-		// artItems is a list of objects. Each object representing an item. 
-		console.log(`artItems:`, artItems)
-	},[])
-	
-	
+        },
+        (error) => {
+          console.error("Error fetching user document: ", error);
+        }
+      );
+      // Cleanup subscription on unmount
+      return () => unsubscribe();
+    }, []);
 
   	const exploreClicked = () => {
       	setHighlightExlore(true);

@@ -404,8 +404,7 @@ export default function ItemDetailScreen(props) {
                             {review.buyer_name}
                           </AppText>
                           <AppText type="smallNormal">
-                            {review.weeks_ago}{" "}
-                            {review.weeks_ago > 1 ? "weeks" : "week"}
+                            {review.review_date}
                           </AppText>
                         </View>
                       </RowView>
