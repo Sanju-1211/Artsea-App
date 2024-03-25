@@ -427,7 +427,7 @@ export default function ItemDetailScreen(props) {
                           <AppText
                             style={{ marginVertical: 8, color: "black" }}
                           >
-                            {item.rating}
+                            {review.rating}
                           </AppText>
                         </RowView>
                       </RowView>
