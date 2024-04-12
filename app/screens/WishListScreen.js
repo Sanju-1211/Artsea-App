@@ -32,18 +32,14 @@ function WishListScreen({navigation}) {
 
 	if (wishList){
 		return (
-
 			<Screen >
-            
-
-
+      
             <View >
                 <AppText style={styles.headerStyle}>My Wishlist</AppText>
             </View>
             <View style={styles.separator}></View>
             {wishList.items?.length > 0?
             (
-            
 
             <View style={{marginBottom:100, flexDirection:"row"}}>
                 <ItemListing 

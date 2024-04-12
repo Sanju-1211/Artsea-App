@@ -23,8 +23,7 @@ function ProfileHeader(props) {
   const authContext = useContext(AuthContext);
   const currentUser = authContext.userDetails;
   const [userDetails, setUserDetails] = useState()
-//   const goToEditProfileScreen = props.goToEditProfileScreen;
-//   const goToUserFollow = props.goToUserFollow;
+
   const navigation = useNavigation();
 
   if (userDetails){

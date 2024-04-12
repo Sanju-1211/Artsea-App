@@ -60,11 +60,6 @@ function BuyerProfileScreen() {
             // Order all orders by recency
             allOrders = allOrders.sort((a, b) => b.createdAt - a.createdAt);
             setOrders(allOrders);
-
-            // flatMap is used instead of map followed by flat.
-            // flatMap first maps each element using the mapping function, then flattens the result into a new array. It's more efficient than doing a separate map and flat.
-            // Map each order to a new array of items, each with the status property added,
-            // then flatten the resulting array of arrays into a single array of items.
             const allItemsWithStatus = allOrders.flatMap((order) =>
               order.items.map((item) => ({
                 ...item, // Spread operator to copy all properties of the item
@@ -75,12 +70,10 @@ function BuyerProfileScreen() {
 
             setItems(allItemsWithStatus);
             console.log(`orders: ${JSON.stringify(orders)}`);
-            //   console.log(`orders.length: ${orders.length}`)
           } else {
             console.log("No such document");
             setOrders([]); // Clear order items if the document doesn't exist
             console.log(`orders: ${JSON.stringify(orders)}`);
-            //  console.log(`orders.length: ${orders.length}`)
           }
         },
         (error) => {
@@ -96,15 +89,6 @@ function BuyerProfileScreen() {
   if (userDetails !== null) {
     return (
       <Screen style={styles.screen}>
-        {/* <View style={styles.UserCardHeader}>
-                    <UserCard
-                    image={{uri: userDetails.image}}
-                    title={userDetails.full_name}
-                    subTitle={userDetails.username}
-                    userCardStyle={styles.userCardStyle}
-                    imageStyle = {styles.imageStyle}
-                    />
-                </View> */}
         <RowView style={{ justifyContent: "space-between", marginBottom: 10 }}>
           <RowView style={{ flex: 1 }}>
 

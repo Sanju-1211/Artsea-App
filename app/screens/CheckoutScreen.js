@@ -314,14 +314,6 @@ const CheckoutScreen = () => {
     }
   }, [cartItems]);
 
-  // if (!cartItems){
-  //   return <Screen>
-  //     <AppText>
-  //       There are no items in your cart yet.
-  //     </AppText>
-  //   </Screen>
-  // }
-  // if saved address and cart items are not null
   if (savedAddresses && cartItems) {
     console.log(
       `savedAddresses is not null: ${JSON.stringify(savedAddresses)}`

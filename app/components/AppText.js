@@ -1,30 +1,8 @@
-// import React from "react";
-// import { Text, StyleSheet, Platform } from "react-native";
-// import colors from "../config/colors";
-
-// function AppText({ children, style }) {
-//     return <Text style={[styles.text, style]}>{children}</Text>;
-// }
-
-// const styles = StyleSheet.create({
-//     text: {
-//         fontSize: 15,
-//         color: colors.primaryText,
-//         fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
-//     },
-// });
-
-// export default AppText;
-
 import React from "react";
 import { Text, StyleSheet, Platform } from "react-native";
 import colors from "../config/colors";
 
 function AppText({ type = "smallNormal", color, style, children, ...props }) {
-  // We are using 3 props explicitly: type, style, and ofcourse,
-  // children.
-  // Any other Text props we use, like onPress? We need to assume
-  // that they are {...props}.
   const textColor = color ? color : colors.black;
   return (
     <Text
