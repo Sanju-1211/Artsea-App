@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import UserCard from "../components/UserCard";
@@ -16,7 +16,7 @@ function ArtisanScreen(props) {
   let artistUserId = props.route.params?.artistUserId;
   const artistUserRef = firebase.firestore().collection("users").doc(artistUserId);
   const [artistUser, setUserDetails] = useState(null);
-
+  
   const currUserId = firebase.auth().currentUser.uid;
   const currUserRef = firebase.firestore().collection("users").doc(currUserId);
   const [currUser, setCurrUserDetails] = useState(null);
@@ -147,8 +147,9 @@ function ArtisanScreen(props) {
 
   if (artItems) {
     return (
-      <Screen style={styles.screen}>
-        <View style={styles.UserCardHeader}>
+      <Screen style={styles.screen} >
+      <ScrollView contentContinaerStyle={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
+        <View style={styles.UserCardHeader} >
           <UserCard
             image={artistUser.image}
             title={artistUser.full_name}
@@ -169,7 +170,7 @@ function ArtisanScreen(props) {
           {followAction ? <AppButton text="Follow" onPress={() => onClickFollow()} /> :
           <AppButton text="Unfollow" onPress={() => onClickUnFollow()}/>}
         </View>
-        <View style={{ marginBottom: 480, flexDirection: "row" }}>
+        <View style={{ marginBottom: 400, flexDirection: "row" }}>
           <ItemListing
             navigation={props.navigation}
             numOfColumns={2}
@@ -178,6 +179,7 @@ function ArtisanScreen(props) {
             items={artItems}
           />
         </View>
+        </ScrollView>
       </Screen>
     );
   }

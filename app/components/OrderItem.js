@@ -60,7 +60,7 @@ function OrderItem({ item, style}) {
       		style={{
         		...styles.container,
         		width: WIDTH - 32,
-        		height: 220,
+        		height: 215,
         		marginVertical: 8,
         		...style
       		}}
@@ -74,9 +74,7 @@ function OrderItem({ item, style}) {
 					<View style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}}>
 					</View>
             	</RowView>
-				<AppText type="extraSmallLight" numberOfLines={2}>
-					{toTitleCase(item.type)} by {item.artist}
-				</AppText>
+
 				<RowView style={{justifyContent: "space-between",  width: "50%"}}>
 					<AppText type="mediumBold">Qty: {item.quantity}</AppText>  
 				</RowView>

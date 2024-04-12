@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Image, ImageBackground} from "react-native";
 import Screen from "../components/Screen";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
@@ -32,31 +32,59 @@ function WishListScreen({navigation}) {
 
 	if (wishList){
 		return (
-			<Screen>
-				<View >
 
-                    <AppText style={styles.headerStyle}>Wish List</AppText>
-				</View>
+			<Screen >
+            
 
-					<View style={{marginBottom:100, flexDirection:"row"}}>
-						<ItemListing 
-							navigation={navigation} 
-							numOfColumns={2} 
-							showIcons={true} 
-							listStyle={styles.listStyle}
-							items={wishList.items}/>
-					</View>
 
+            <View >
+                <AppText style={styles.headerStyle}>My Wishlist</AppText>
+            </View>
+            <View style={styles.separator}></View>
+            {wishList.items?.length > 0?
+            (
+            
+
+            <View style={{marginBottom:100, flexDirection:"row"}}>
+                <ItemListing 
+                    navigation={navigation} 
+                    numOfColumns={2} 
+                    showIcons={true} 
+                    listStyle={styles.listStyle}
+                    items={wishList.items}/>
+            </View>
+            
+            )
+
+            :
+            (
+            <View style={styles.noOrder}>
+            <AppText >Start Your Wishlist</AppText>
+            </View>
+            )
+            }
 			</Screen>
-		  );
-	} else {
+		);
+	} 
+    else {
 		return(
-			<Loading/>
+            <Loading/>
 		)
 	}
 }
 
 const styles = StyleSheet.create({
+    background: {
+        flex: 1,
+        justifyContent: "flex-end",
+    },
+    separator: {
+        width: "100%",
+        height: 1,
+        backgroundColor: "lightgrey",
+        marginVertical: 5,
+        alignSelf: "center",
+      },
 	screen: {
 		padding: 2,
 	},
@@ -69,8 +97,8 @@ const styles = StyleSheet.create({
 	headerStyle: {
 		flexDirection: "row",
 		alignItems: "center",
-		justifyContent: "space-between",
-		marginBottom: 15,
+		justifyContent: "center",
+		marginBottom: 10,
 		marginLeft: 1,
 		marginRight: 10,
         fontWeight: "bold",
@@ -101,7 +129,14 @@ const styles = StyleSheet.create({
 	listStyle:{
 		flex: 0.5, 
 		padding: 2, 
-	}
+	},
+    noOrder:{
+        justifyContent:"center",
+        alignItems:"center",
+        color: colors.lightgrey,
+        height: '90%' ,
+        
+    }
 });
 
 export default WishListScreen;

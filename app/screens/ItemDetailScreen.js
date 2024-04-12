@@ -177,7 +177,7 @@ export default function ItemDetailScreen(props) {
                     width: WIDTH,
                     height: ((WIDTH - 70) * 2) / 3,
                     aspectRatio: 3 / 2,
-                    resizeMode: "cover",
+                    resizeMode: "contain",
                     borderRadius: 15,
                   }}
                   source={{ uri: item }}

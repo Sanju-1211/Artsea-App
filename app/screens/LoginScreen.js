@@ -117,7 +117,7 @@ function LoginScreen(props) {
     
       
       <ImageBackground
-            blurRadius={30}
+            blurRadius={100}
             style={styles.background}
             source={require("../assets/Welcome_Background.jpg")}
         >
@@ -127,7 +127,7 @@ function LoginScreen(props) {
         placeholder="Email"
         label="Email"
         value={email}
-        textContentType="email"
+        textContentType="emailAddress"
         keyboardType="email-address"
         onChangeText={function (e) {
           setEmail(e);
@@ -184,18 +184,32 @@ function LoginScreen(props) {
 
       {/* Footer to Sign Up */}
       <View style={styles.footer}>
-        <AppText type="mediumBold" style={{ color: colors.white }}>
-          Don't have an account?{"   "}
+        <RowView >
+        
           <AppText
-            type="mediumExtraBold"
-            style={{ color: colors.primary }}
+            type="largeBold"
+            style={styles.loginLinks}
             onPress={() => {
               props.navigation.navigate("Register");
             }}
           >
             Register
           </AppText>
-        </AppText>
+
+          
+          <AppText
+            type="largeBold"
+            style={{ color:colors.loginLink }}
+            
+            onPress={() => {
+              //props.navigation.navigate("");
+              authContext.onPasswordResetRequest(email, props.navigation);
+            }}
+          >
+            Reset Password
+          </AppText>
+          
+          </RowView>
       </View>
       </ImageBackground>
     
@@ -246,7 +260,19 @@ const styles = StyleSheet.create({
     // Border
     borderTopColor: colors.white,
     borderTopWidth: 1,
+    
   },
+  
+  loginLinks: { 
+    color: colors.white,
+    borderRightWidth: 1,
+    marginRight:10,
+    paddingRight:10,
+    borderRightColor:colors.white,
+    color:colors.loginLink 
+  },
+            
+  pasword: {justifyContent:"space-between"}
 });
 
 export default LoginScreen;

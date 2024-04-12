@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Image } from "react-native";
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import UserCard from "../components/UserCard";
@@ -13,6 +13,7 @@ import OrderItem from "../components/OrderItem";
 import RowView from "../components/RowView";
 import AppIcon from "../components/AppIcon";
 import { Avatar } from "react-native-paper";
+import { Ionicons , Entypo} from '@expo/vector-icons';
 
 function BuyerProfileScreen() {
   const authContext = useContext(AuthContext);
@@ -92,7 +93,7 @@ function BuyerProfileScreen() {
     }
   }, []);
 
-  if (userDetails !== null && orders?.length && items?.length) {
+  if (userDetails !== null) {
     return (
       <Screen style={styles.screen}>
         {/* <View style={styles.UserCardHeader}>
@@ -104,17 +105,15 @@ function BuyerProfileScreen() {
                     imageStyle = {styles.imageStyle}
                     />
                 </View> */}
-        <RowView style={{ justifyContent: "space-between", marginBottom: 16 }}>
+        <RowView style={{ justifyContent: "space-between", marginBottom: 10 }}>
           <RowView style={{ flex: 1 }}>
-            <Avatar.Image
-              source={{
-                uri: userDetails.image,
-              }}
-              size={60}
-              style={styles.imageStyle}
-            />
 
-            <AppText type={"h1ExtraBold"}>{userDetails.full_name}</AppText>
+            <Ionicons name="person-circle" size={80} color={colors.grey} />
+            <View>
+            <AppText type={"mediumExtraBold"}>{userDetails.full_name}</AppText>
+            <AppText type={"smallBold"}>{userDetails.email}</AppText>
+            </View>
+
           </RowView>
           <AppButton
             width={80}
@@ -125,9 +124,9 @@ function BuyerProfileScreen() {
           />
         </RowView>
 
-        <AppText type={"h3Bold"}>Orders</AppText>
-        {items?.length > 0 ? (
-          <View style={{marginBottom:200, flexDirection:"row"}}>
+        <AppText type={"h3Bold"} >Orders</AppText>
+        {items?.length && items?.length > 0 ? (
+          <View style={{marginBottom:220, flexDirection:"row"}}>
           <FlatList
             showsVerticalScrollIndicator={false}
             data={items}
@@ -143,8 +142,8 @@ function BuyerProfileScreen() {
           />
           </View>
         ) : (
-          <View>
-            <AppText>You've not placed any orders yet.</AppText>
+          <View >
+          <AppText>You've not placed any orders yet.</AppText>
           </View>
         )}
       </Screen>
@@ -155,6 +154,22 @@ function BuyerProfileScreen() {
 }
 
 const styles = StyleSheet.create({
+    noOrders:{
+      justifyContent: "center",
+      alignItems: "center",
+      height: '75%'
+    },
+    ordersCSS:{
+        textAlign: "center"
+    },
+    profileCard:{ 
+        justifyContent: "space-between",
+         marginBottom: 16,
+         backgroundColor: colors.white,
+         padding: 15,
+         borderRadius: 25 ,
+         borderWidth:2,
+        },
   headingContainer: {
     marginVertical: 10,
     padding: 10,
@@ -182,11 +197,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     justifyContent: "space-around",
   },
-  // imageStyle:{
-  // 	height:100,
-  // 	width: 100,
-  // 	borderRadius: 50
-  // }
+   imageStyle:{
+    height: 75,
+    width: 75,
+    borderRadius: 50,
+    backgroundColor:colors.black,
+    margin: 10,
+    justifyContent: "center",
+    alignItems:"center"
+   }
 });
 
 export default BuyerProfileScreen;

@@ -8,15 +8,9 @@
 // React and ReactNative Imports
 import React, { useState, createContext } from "react";
 import { Alert } from "react-native";
-
-// Library Imports
 import firebase from "firebase/compat";
-// import { functions as firebaseFunctions } from "firebase/compat/functions";
 import { getFunctions, httpsCallable } from "firebase/functions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-// Data
-// Students who can register to the app.
 
 const errorMessages = {
   // Email
@@ -44,53 +38,29 @@ const errorMessages = {
     "Please reauthenticate to complete this action.",
 };
 
-// The following line creates a context object.
-// When React renders a component tha subscribes to this Context object,
-// it will read the current context value from the closest matching
-// Context Provider above it in the tree.
 export const AuthContext = createContext();
 
 export function AuthContextProvider(props) {
-  // Set a state to keep track of whether or not the authentication
-  // is loading.
+  // Set a state to keep track of whether or not the authentication is loading.
   const [isLoading, setIsLoading] = useState(false);
 
   // Set a state to keep track of the current user.
   const [user, setUser] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
 
   // Set a state to keep track of any authentication errors.
   const [authError, setAuthError] = useState(null);
 
   // Set a state to keep track of name of the user.
-  const [name, setName] = useState(null);
+  //const [name, setName] = useState(null);
 
   // Subscribe to the users current authentication state, and receive an
   // event whenever that state changes
   firebase.auth().onAuthStateChanged(async function (usr) {
     // If a user is detected, set the user to that user and their name.
-
     if (usr) {
       setUser(usr);
-      // console.log(`usr email: ${usr.email}`);
-      // console.log(`onAuth: usr: ${JSON.stringify(usr)}`);
-      // Move Name to Firestore and setName
-      // console.log(usr);
-      // firebase
-      //   .firestore()
-      //   .collection("users")
-      //   .doc(usr.uid) // Set default values
-      //   .get()
-      //   .then((doc) => {
-      //     if (doc.exists) {
-      //       const fullName = doc.data().fullName;
-      //       // console.log(doc.data());
-      //       setName(fullName);
-      //     }
-      //   })
-      //   .catch((error) => {
-      //     // console.log(`error getting user's name: ${error}`);
-      //   });
-      try {
+      /*try {
         await AsyncStorage.getItem(
           `${firebase.auth().currentUser.uid}-fullName`
         ).then((fullName) => {
@@ -102,17 +72,7 @@ export function AuthContextProvider(props) {
         });
       } catch (error) {
         // console.log(`error getting user's name: ${error}`);
-      }
-
-      // Set the user's name.
-      // let email = usr["email"];
-      // let studentUser = students[email];
-      // if (studentUser !== undefined) {
-      //   let firstName = studentUser["firstName"];
-      //   let lastName = studentUser["lastName"];
-      //   setName(`${firstName} ${lastName}`);
-      //   // console.log(`onAuth: name: ${firstName} ${lastName}`);
-      // }
+      }*/
       // We are not loading authentication.
     } else {
       // We are not loading authentication.
@@ -121,11 +81,9 @@ export function AuthContextProvider(props) {
 
   // Function to handle sign in
   function onLogIn(email, password) {
-    // Validates the user inputs in the Sign In form, and logs them in.
-
     // Reset authentication error to null.
     setAuthError(null);
-    // console.log(`Logging in user - ${email}`);
+
     // As soon as we request a login, we will set
     // loading to true.
     setIsLoading(true);
@@ -153,21 +111,15 @@ export function AuthContextProvider(props) {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(async function (usr) {
-        // The signInWithEmailAndPassword function returns a user object.
-        // console.log(`usr credential: ${usr}`);
-        // console.log(`user: ${usr.user}`);
         setUser(usr);
 
-        try {
+        /*try {
           const uid = firebase.auth().currentUser.uid;
           const fullName = await AsyncStorage.getItem(`${uid}-fullName`);
           if (fullName !== null) {
             setName(fullName);
             // console.log(`authstatechange: name: ${fullName}`);
           } else {
-            // console.log(
-            //   "fullName is null: Calling Firebase Function to Get Name"
-            // );
             const functions = getFunctions();
             const validUser = httpsCallable(functions, "validUser");
 
@@ -175,9 +127,6 @@ export function AuthContextProvider(props) {
               const firstName = result.data.firstName;
               const lastName = result.data.lastName;
               setName(`${firstName} ${lastName}`);
-              // console.log(
-              //   `onLogIn: validUser: fullName: ${firstName} ${lastName}`
-              // );
               await AsyncStorage.setItem(
                 `${uid}-fullName`,
                 `${firstName} ${lastName}`
@@ -186,29 +135,7 @@ export function AuthContextProvider(props) {
           }
         } catch (error) {
           // console.log(`error getting user's name: ${error}`);
-        }
-
-        // Move Name to Firestore and setName
-        // firebase
-        //   .firestore()
-        //   .collection("users")
-        //   .doc(usr.uid) // Set default values
-        //   .get()
-        //   .then((doc) => {
-        //     if (doc.exists) {
-        //       const fullName = doc.data().fullName;
-        //       // console.log(doc.data());
-        //       setName(fullName);
-        //     }
-        //   })
-        //   .catch((error) => {
-        //     console.log("Error getting user's document", error);
-        //   });
-        // Set user name
-        // let firstName = students[email]["firstName"];
-        // let lastName = students[email]["lastName"];
-        // setName(`${firstName} ${lastName}`);
-        // console.log(`onLogIn: name: ${firstName} ${lastName}`);
+        }*/
 
         // set isLoading to false as we are done loading authentication
         setIsLoading(false);
@@ -228,127 +155,62 @@ export function AuthContextProvider(props) {
       });
   }
 
-  // Function to handle sign up of new users.
-  async function onSignUp(email, password, confirmPassword) {
+  function onSignUp(email, password, fullName, isArtist) {
     // Validates the user inputs in the Sign Up form, creates their account,
     // and logs them in.
-    // const response = await validUser({ email });
-    // Reset authentication error to null.
+
     setAuthError(null);
+
     // As soon as we are done filling in the form and click on register
     // we are loading the authentication.
     setIsLoading(true);
 
-    (result) => {
-        // console.log(`Ran function: Result: ${JSON.stringify(result.data)}`);
-          // console.log("User is allowed in the pilot.");
-          // console.log(`Registering user - ${email}`);
-
-          // Get the first name and last name from onCall method
-          // and store it here.
-          const firstName = result.data.firstName;
-          const lastName = result.data.lastName;
-          setName(`${firstName} ${lastName}`);
-          // console.log(`Name of User: ${firstName} ${lastName}.`);
-
-          // Check if the email is empty.
-          if (email == "") {
-            // console.log("Please add your email address.");
-            setIsLoading(false);
-            setAuthError("Please add your email address.");
-            return;
-          }
-
-          // Check if the password is empty.
-          if (password == "") {
-            // console.log("Please provide a password.");
-            setIsLoading(false);
-            setAuthError("Please provide a password.");
-            return;
-          }
-
-          // Check if confirmPassword field is empty.
-          if (confirmPassword == "") {
-            // console.log("Please confirm your password.");
-            setIsLoading(false);
-            setAuthError("Please confirm your password.");
-            return;
-          }
-
-          // Let's make sure that the password and confirm password
-          // are the same.
-          if (password !== confirmPassword) {
-            // console.log("Passwords do not match.");
-            setIsLoading(false);
-            setAuthError("Please ensure that the passwords match.");
-            return;
-          }
-
-          if (password === confirmPassword) {
-            // Use firebase authentication method to create the user account
-            // with email id and password.
-
-            // Catch any errors in the authentication process, and display it to
-            // the user.
-            firebase
-              .auth()
-              .createUserWithEmailAndPassword(email, password)
-              .then(async function (usr) {
-                // The createUserWithEmailAndPassword function returns a user object.
-                // console.log(`Setting user to: ${JSON.stringify(usr)}`);
-                setUser(usr);
-
-                try {
-                  const currentUserUid = firebase.auth().currentUser.uid;
-                  await AsyncStorage.setItem(
-                    `${currentUserUid}-fullName`,
-                    `${firstName} ${lastName}`
-                  );
-                } catch (error) {
-                  // console.log("Error saving name to AsyncStorage", error);
-                }
-
-                // Upload user data to firestore.
-                firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(firebase.auth().currentUser.uid) // Set default values
-                  .set({
-                    // Not setting fullName and email here
-                    uid: firebase.auth().currentUser.uid,
-                    expoPushToken: null,
-                  })
-                  .catch((error) => {
-                    // console.log("Error setting user's document", error);
-                  });
-
-                // console.log(`Registering: name: ${firstName} ${lastName}`);
-
-                // set isLoading to false as we are done loading
-                setIsLoading(false);
-                // console.log(
-                //   `User: ${JSON.stringify(usr.user.email)}: is registered.`
-                // );
-              })
-              .catch(function (authError) {
-                // console.log(`OnSignUp: AuthError: ${authError}`);
-                // and done with loading authentication.
-                setIsLoading(false);
-                let e = authError.code.toString();
-                if (e in errorMessages) {
-                  // Set the AuthError state.
-                  setAuthError(errorMessages[e]);
-                  return;
-                } else {
-                  setAuthError(authError.message.toString);
-                  return;
-                }
-              });
-          }
+    // Use firebase authentication method to create the user account
+    // with email id and password.
+    // Catch any errors in the authentication process, and display it to
+    // the user.
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(function (usr) {
+        // Get the user login object created
+        setUser(usr);
+        // set isLoading to false as we are done loading
+        setIsLoading(false);
+        // Create firestore object for this user and setUserDetails.
+        const userDetailsObj = {
+          bio: "",
+          email: email.toLowerCase(),
+          full_name: fullName,
+          image: `https://media.istockphoto.com/id/1130884625/vector/user-member-vector-icon-for-ui-user-interface-or-profile-face-avatar-app-in-circle-design.jpg?s=612x612&w=0&k=20&c=1ky-gNHiS2iyLsUPQkxAtPBWH1BZt0PKBB1WBtxQJRE=`,
+          uid: usr.user.uid,
+          username: email.split("@")[0],
+          type: "customer",
+        };
+        setUserDetails(userDetailsObj);
+        // await createUserDetails(usr.user.uid, userDetailsObj);
+        firebase
+          .firestore()
+          .collection("users")
+          .doc(usr.user.uid)
+          .set(userDetailsObj);
+      })
+      .catch(function (authError) {
+        // console.log(`OnSignUp: AuthError: ${authError}`);
+        // and done with loading authentication.
+        setIsLoading(false);
+        console.error(authError);
+        let e = authError.code.toString();
+        if (e in errorMessages) {
+          // Set the AuthError state.
+          setAuthError(errorMessages[e]);
+        } else {
+          setAuthError(authError.message);
         }
-      }
+      });
+    }
 
-        // Function to handle user logging out.
+  // Function to handle user logging out.
   function onLogout() {
     // console.log("Logging out and setting user to null.");
     firebase
@@ -417,10 +279,15 @@ export function AuthContextProvider(props) {
       });
   }
 
-  async function onPasswordResetRequest(email, setEmail, forgotPasswordProps) {
-    // console.log("Sending Password Reset Email");
+  async function onPasswordResetRequest(email, navigation) {
+    console.log("Sending Password Reset Email");
     setIsLoading(true);
     setAuthError(null);
+    if (email == "") {
+      setAuthError("Please add your email address.");
+      setIsLoading(false);
+      return;
+    }
     await firebase
       .auth()
       .sendPasswordResetEmail(email)
@@ -429,7 +296,7 @@ export function AuthContextProvider(props) {
         setEmail(""); // Clear email field
         setIsLoading(false);
         setAuthError(null);
-        forgotPasswordProps.navigation.navigate("Sign In");
+        navigation.navigate("Sign In");
       })
       .catch((authError) => {
         let e = authError.code.toString();
@@ -460,10 +327,9 @@ export function AuthContextProvider(props) {
         // If there is no user, return False.
         isAuthenticated: !!user,
         user,
-        name,
+        userDetails,
         isLoading,
         authError,
-        setAuthError,
         onLogIn,
         onSignUp,
         onLogout,
@@ -474,7 +340,4 @@ export function AuthContextProvider(props) {
       {props.children}
     </AuthContext.Provider>
   );
-  }
-
-
-
+}

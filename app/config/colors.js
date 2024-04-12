@@ -18,5 +18,6 @@ export default {
   whitegrey: "#efeeee",
   offwhite: "#fbfbfb",
   white: "#FFFFFF",
+  loginLink:"#0070E0",
 };
   

@@ -228,6 +228,7 @@ const CheckoutScreen = () => {
             status: "pending",
             createdAt: timestamp,
             arrivingBy: arrivingByFormatted, // Use the formatted date
+            deliveryAddress: currentAddress,
           };
 
           if (!ordersDoc.exists) {

@@ -177,7 +177,7 @@ function RegisterScreen(props) {
   return (
     
       <ImageBackground
-            blurRadius={30}
+            blurRadius={100}
             style={styles.background}
             source={require("../assets/Welcome_Background.jpg")}
         >
@@ -188,7 +188,7 @@ function RegisterScreen(props) {
         placeholder="Full Name"
         label="Full Name"
         value={fullName}
-        keyboardType="name"
+
         onChangeText={function (fn) {
           setFullName(fn);
         }}
@@ -201,7 +201,7 @@ function RegisterScreen(props) {
         placeholder="Email"
         label="Email"
         value={email}
-        textContentType="email"
+        textContentType="emailAddress"
         keyboardType="email-address"
         onChangeText={function (e) {
           setEmail(e);
@@ -228,7 +228,9 @@ function RegisterScreen(props) {
       <AppButton
         buttonDisabled={buttonDisabled}
         onPress={function () {
+            console.log("after sign up register clicked")
           if (!buttonDisabled) {
+            console.log("before sign up register clicked")
             authContext.onSignUp(email, password, fullName, isArtist);
           }
         }}
@@ -257,11 +259,11 @@ function RegisterScreen(props) {
 
       {/* Footer to Log In */}
       <View style={styles.footer}>
-        <AppText type="mediumBold" style={{ color: colors.white }}>
-          Already have an account?{" "}
+        <AppText type="largeBold" style={{ color: colors.white }}>
+          
           <AppText
-            type="mediumExtraBold"
-            style={{ color: colors.primary }}
+            type="largeBold"
+            style={{ color: colors.loginLink }}
             onPress={() => {
               props.navigation.navigate("Login");
             }}
