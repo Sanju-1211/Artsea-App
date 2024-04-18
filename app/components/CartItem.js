@@ -30,7 +30,7 @@ function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
       style={{
         ...styles.container,
         width: WIDTH - 32,
-        height: 185,
+        height: 195,
         ...style
       }}
       
@@ -38,9 +38,9 @@ function CartItem({ item, onUpdateQuantity, onRemoveItem, style}) {
       {/* Image */}
       <Image style={styles.image} source={{uri: item.images[0]}} onPress={() => navigation.navigate("ItemDetails", { item: item })}/>
 
-      <View style={{flex: 0.6, marginLeft: 8}}>
+      <View style={{flex: 0.8, marginLeft: 8}}>
         <RowView style={{justifyContent: "space-between"}}>
-          <AppText type={"mediumBold"}  >{item.item_name}</AppText>
+          <AppText type={"mediumBold"} style={{width:"90%"}} >{item.item_name}</AppText>
           <View style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}}>
           <AppIcon
           iconSet={"Entypo"}

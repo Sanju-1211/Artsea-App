@@ -377,7 +377,7 @@ const CheckoutScreen = () => {
 
           <View style={styles.section}>
             {cartItems.length > 0 ? (
-              <FlatList
+                <FlatList
                 data={cartItems}
                 keyExtractor={(item) => item.image.toString()}
                 renderItem={({ item }) => (

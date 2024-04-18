@@ -24,7 +24,8 @@ function HomeScreen({navigation}) {
 			querySnapshot.forEach((doc) => {
 			  artItemsData.push(doc.data());
 			});
-			setArtItems(artItemsData);
+            artItemsData = artItemsData.sort((a, b) => a.artist < b.artist ? 1 : -1);
+            setArtItems(artItemsData);
         },
         (error) => {
           console.error("Error fetching user document: ", error);
