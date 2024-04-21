@@ -64,7 +64,16 @@ function WishListScreen({navigation}) {
 	} 
     else {
 		return(
-            <Loading/>
+			<Screen >
+      
+            <View >
+                <AppText style={styles.headerStyle}>My Wishlist</AppText>
+            </View>
+            <View style={styles.separator}></View>            
+            <View style={styles.noOrder}>
+            <AppText >Start Your Wishlist</AppText>
+            </View>
+            </Screen>
 		)
 	}
 }

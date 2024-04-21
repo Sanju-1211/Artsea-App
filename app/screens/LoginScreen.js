@@ -118,11 +118,10 @@ function LoginScreen(props) {
           >
             Register
           </AppText>
-
-          
+          <AppText style={{marginRight:10,paddingRight:10,}}></AppText>
           <AppText
             type="largeBold"
-            style={{ color:colors.loginLink }}
+            style={{ color:colors.white ,borderBottomWidth:1,borderBottomColor:colors.white}}
             
             onPress={() => {
               //props.navigation.navigate("");
@@ -188,11 +187,8 @@ const styles = StyleSheet.create({
   
   loginLinks: { 
     color: colors.white,
-    borderRightWidth: 1,
-    marginRight:10,
-    paddingRight:10,
-    borderRightColor:colors.white,
-    color:colors.loginLink 
+    borderBottomWidth:1,
+    borderBottomColor:colors.white
   },
             
   pasword: {justifyContent:"space-between"}

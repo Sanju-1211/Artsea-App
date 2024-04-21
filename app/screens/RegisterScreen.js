@@ -10,6 +10,7 @@ import colors from "../config/colors";
 import { AuthContext } from "../services/auth/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import Logo from "../components/Logo";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 function RegisterScreen(props) {
   const [email, setEmail] = useState("");
@@ -128,18 +129,18 @@ function RegisterScreen(props) {
 
       {/* Footer to Log In */}
       <View style={styles.footer}>
-        <AppText type="largeBold" style={{ color: colors.white }}>
+    
           
           <AppText
             type="largeBold"
-            style={{ color: colors.loginLink }}
+            style={{ color: colors.white, borderBottomWidth:1,borderBottomColor:colors.white }}
             onPress={() => {
               props.navigation.navigate("Login");
             }}
           >
-            Log In
+            Login
           </AppText>
-        </AppText>
+        
       </View>
       </ImageBackground>
   );
@@ -158,6 +159,7 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    
   },
   inputContainerStyle: { height: 50, padding: 8 },
   inputStyle: { padding: 8 },
@@ -167,6 +169,7 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     marginTop: 80,
     marginBottom: 20,
+    
   },
   errorContainer: {
     width: 350,
@@ -187,6 +190,7 @@ const styles = StyleSheet.create({
     // Border
     borderTopColor: colors.lightgrey,
     borderWidth: 1,
+
     // Fill
   },
 });
