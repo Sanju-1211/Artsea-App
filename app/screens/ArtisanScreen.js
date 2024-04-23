@@ -6,12 +6,9 @@ import UserCard from "../components/UserCard";
 import colors from "../config/colors";
 import AppButton from "../components/AppButton";
 import ItemListing from "../components/ItemListing";
-import { useNavigation, useRoute } from "@react-navigation/native";
 import firebase from "firebase/compat";
 
 function ArtisanScreen(props) {
-
-  console.log(props);
 
   let artistUserId = props.route.params?.artistUserId;
   const artistUserRef = firebase.firestore().collection("users").doc(artistUserId);
@@ -120,7 +117,7 @@ function ArtisanScreen(props) {
         setfollowAction(false);
       }); 
     }catch (error) {
-      console.error("Failed to add item to wishlist: ", error);
+      console.error("Transaction failed: ", error);
     }
   }
 

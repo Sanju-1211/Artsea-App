@@ -9,16 +9,13 @@ export function Navigation() {
   // Uncomment the following line to log out right now
   //   AsyncStorage.clear();
   const [loggedIn, setLoggedIn] = useState(false);
-  // const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(function () {
     firebase.auth().onAuthStateChanged(function (user) {
       if (!user) {
         setLoggedIn(false);
-        // setIsLoaded(true)
       } else {
         setLoggedIn(true);
-        // setIsLoaded(true)
       }
       console.log(user? `There is a user: ${JSON.stringify(user)}` : `There is no user: ${JSON.stringify(user)}`)
     });

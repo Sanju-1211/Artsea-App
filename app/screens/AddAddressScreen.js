@@ -7,7 +7,6 @@ import AppText from "../components/AppText";
 import firebase from "firebase/compat";
 import { ScrollView } from "react-native-gesture-handler";
 import colors from "../config/colors";
-import { RadioButton } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 function toTitleCase(str) {
@@ -35,13 +34,10 @@ function AddAddressScreen() {
       const userRef = firebase.firestore().collection("users").doc(user.uid);
       const cartRef = firebase.firestore().collection('carts').doc(user.uid)
       try {
-        // Let's start an transaction in the background
-        await firebase.firestore().runTransaction(async (transaction) => {
+          await firebase.firestore().runTransaction(async (transaction) => {
           // Get the current user's document
           const userDoc = await transaction.get(userRef);
 
-          // If the current user's document doesn't exist
-          // raise an error
           if (!userDoc.exists) {
             throw "User document does not exist!";
           }
@@ -67,6 +63,7 @@ function AddAddressScreen() {
                 selected: false,
               }))
             : [];
+
           // Add the new address to the updated Addresses
           updatedAddresses.push(newAddress);
 
@@ -79,7 +76,6 @@ function AddAddressScreen() {
           
           } else {
             console.log("The Cart document for the current user does not exist.")
-            //transaction.set(cartRef, {items: [{...item, userId}]})
           }
         });
         

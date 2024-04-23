@@ -9,8 +9,6 @@
 import React, { useState, createContext } from "react";
 import { Alert } from "react-native";
 import firebase from "firebase/compat";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const errorMessages = {
   // Email
@@ -51,31 +49,12 @@ export function AuthContextProvider(props) {
   // Set a state to keep track of any authentication errors.
   const [authError, setAuthError] = useState(null);
 
-  // Set a state to keep track of name of the user.
-  //const [name, setName] = useState(null);
-
   // Subscribe to the users current authentication state, and receive an
   // event whenever that state changes
   firebase.auth().onAuthStateChanged(async function (usr) {
-    // If a user is detected, set the user to that user and their name.
+    // If a user is detected, set the user.
     if (usr) {
       setUser(usr);
-      /*try {
-        await AsyncStorage.getItem(
-          `${firebase.auth().currentUser.uid}-fullName`
-        ).then((fullName) => {
-          // console.log(`authstatechange: fullName: ${fullName}`);
-          if (fullName !== null) {
-            setName(fullName);
-            // console.log(`authstatechange: name: ${fullName}`);
-          }
-        });
-      } catch (error) {
-        // console.log(`error getting user's name: ${error}`);
-      }*/
-      // We are not loading authentication.
-    } else {
-      // We are not loading authentication.
     }
   });
 
@@ -84,8 +63,6 @@ export function AuthContextProvider(props) {
     // Reset authentication error to null.
     setAuthError(null);
 
-    // As soon as we request a login, we will set
-    // loading to true.
     setIsLoading(true);
 
     // Check if the email is empty.
@@ -97,7 +74,6 @@ export function AuthContextProvider(props) {
 
     // Check if the password is empty.
     if (password == "") {
-      // console.log("Please provide a password.");
       setAuthError("Please provide a password.");
       setIsLoading(false);
       return;
@@ -112,45 +88,15 @@ export function AuthContextProvider(props) {
       .signInWithEmailAndPassword(email, password)
       .then(async function (usr) {
         setUser(usr);
-
-        /*try {
-          const uid = firebase.auth().currentUser.uid;
-          const fullName = await AsyncStorage.getItem(`${uid}-fullName`);
-          if (fullName !== null) {
-            setName(fullName);
-            // console.log(`authstatechange: name: ${fullName}`);
-          } else {
-            const functions = getFunctions();
-            const validUser = httpsCallable(functions, "validUser");
-
-            validUser({ email: email }).then(async (result) => {
-              const firstName = result.data.firstName;
-              const lastName = result.data.lastName;
-              setName(`${firstName} ${lastName}`);
-              await AsyncStorage.setItem(
-                `${uid}-fullName`,
-                `${firstName} ${lastName}`
-              );
-            });
-          }
-        } catch (error) {
-          // console.log(`error getting user's name: ${error}`);
-        }*/
-
-        // set isLoading to false as we are done loading authentication
         setIsLoading(false);
-        // console.log(`User logged in: ${usr}`);
       })
       .catch(function (authError) {
         let e = authError.code.toString();
         if (e in errorMessages) {
-          // Set the AuthError state.
           setAuthError(errorMessages[e]);
         } else {
           setAuthError(authError.message.toString());
         }
-
-        // and we are done loading authentication.
         setIsLoading(false);
       });
   }
@@ -161,8 +107,6 @@ export function AuthContextProvider(props) {
 
     setAuthError(null);
 
-    // As soon as we are done filling in the form and click on register
-    // we are loading the authentication.
     setIsLoading(true);
 
     // Use firebase authentication method to create the user account
@@ -173,9 +117,7 @@ export function AuthContextProvider(props) {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(function (usr) {
-        // Get the user login object created
         setUser(usr);
-        // set isLoading to false as we are done loading
         setIsLoading(false);
         // Create firestore object for this user and setUserDetails.
         const userDetailsObj = {
@@ -188,7 +130,6 @@ export function AuthContextProvider(props) {
           type: "customer",
         };
         setUserDetails(userDetailsObj);
-        // await createUserDetails(usr.user.uid, userDetailsObj);
         firebase
           .firestore()
           .collection("users")
@@ -196,8 +137,6 @@ export function AuthContextProvider(props) {
           .set(userDetailsObj);
       })
       .catch(function (authError) {
-        // console.log(`OnSignUp: AuthError: ${authError}`);
-        // and done with loading authentication.
         setIsLoading(false);
         console.error(authError);
         let e = authError.code.toString();
@@ -212,14 +151,12 @@ export function AuthContextProvider(props) {
 
   // Function to handle user logging out.
   function onLogout() {
-    // console.log("Logging out and setting user to null.");
     firebase
       .auth()
       .signOut()
       .then(() => {
         setUser(null);
         setAuthError(null);
-        // console.log("Signed Out");
       })
       .catch((e) => {
         // console.log("Sign Out Error: ", e);
@@ -228,7 +165,7 @@ export function AuthContextProvider(props) {
 
   // Function to handle password change.
   function onChangePassword(currentPassword, newPassword) {
-    // As soon as we click the change password button, we set loading to true.
+
     setIsLoading(true);
 
     // Function to reauthenticate user with current password.
@@ -250,31 +187,22 @@ export function AuthContextProvider(props) {
           .then(() => {
             setIsLoading(false);
             setAuthError(null);
-            // console.log("Password updated!");
             Alert.alert("Password successfully changed.");
           })
           .catch((authError) => {
-            // If there is an error:
-            // - Remove "Firebase" from the start of the message.
-            // - Remove "(auth/)" from the end of the message.
             let e = authError.message.toString();
             e = e.split("Firebase: ").pop();
             e = e.split("(auth")[0];
-
-            // Set the AuthError state.
             setAuthError(e);
           });
       })
       .catch((authError) => {
         let e = authError.code.toString();
         if (e in errorMessages) {
-          // Set the AuthError state.
           setAuthError(errorMessages[e]);
         } else {
           setAuthError(authError.message.toString);
         }
-
-        // and we are done loading authentication.
         setIsLoading(false);
       });
   }
@@ -293,7 +221,7 @@ export function AuthContextProvider(props) {
       .sendPasswordResetEmail(email)
       .then(() => {
         Alert.alert("Password reset email sent!");
-        setEmail(""); // Clear email field
+        setEmail(""); 
         setIsLoading(false);
         setAuthError(null);
         navigation.navigate("Sign In");
@@ -301,7 +229,6 @@ export function AuthContextProvider(props) {
       .catch((authError) => {
         let e = authError.code.toString();
         if (e in errorMessages) {
-          // Set the AuthError state.
           setAuthError(errorMessages[e]);
         } else {
           setAuthError(authError.message.toString);
@@ -313,7 +240,7 @@ export function AuthContextProvider(props) {
   // Return a context provider with:
   // - isAuthenticated: true or false - is there are user currently?
   // - user: current user object
-  // - name: Full name of user.
+  // - userDetails: user details.
   // - isLoading: Is authentication in process?
   // - authError: Did we get an authError while trying to authenticate?
   // - onLogIn: Logs in using email and password - sets the user.
@@ -324,7 +251,6 @@ export function AuthContextProvider(props) {
   return (
     <AuthContext.Provider
       value={{
-        // If there is no user, return False.
         isAuthenticated: !!user,
         user,
         userDetails,

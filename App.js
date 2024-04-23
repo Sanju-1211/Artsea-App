@@ -1,12 +1,4 @@
 import * as React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import RegisterScreenNavigator from './app/navigation/RegisterScreenNavigator';
-import WelcomeScreen from "./app/screens/WelcomeScreen";
-import LoginScreenNavigator from './app/navigation/LoginScreenNavigator';
-import { NavigationContainer } from '@react-navigation/native';
-import AppNavigator from './app/navigation/AppNavigator';
-
-// Import the functions you need from the SDKs you need
 import firebase from 'firebase/compat';
 import { initializeApp } from "firebase/app";
 import { AuthContextProvider } from './app/services/auth/AuthContext';
@@ -15,11 +7,7 @@ import { initializeAuth } from "firebase/auth";
 import { getReactNativePersistence } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+//Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyB3m28DiRR_HabqgqxYVenreLgZOl8qUTM",
   authDomain: "artsea-de735.firebaseapp.com",
@@ -31,11 +19,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 if (firebase.apps.length === 0) {
-  // console.log("Firebase App Initialized.");
-
   // Initialize App with Persisting Logins.
   const Artsea = firebase.initializeApp(firebaseConfig);
-  // Make sure that 
+ 
   initializeAuth(Artsea, {
     persistence: getReactNativePersistence(AsyncStorage),
   });

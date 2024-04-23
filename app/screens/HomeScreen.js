@@ -3,17 +3,14 @@ import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 import Screen from "../components/Screen";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
-import { Feather } from '@expo/vector-icons';
 import ItemListing from "../components/ItemListing";
 import Following from "../components/Following";
-// Import firebase 
 import firebase from "firebase/compat"
 import Loading from "../components/Loading";
 
 function HomeScreen({navigation}) {
   	const [highlightExplore, setHighlightExlore] = useState(true);
   	const [highlightFollowing, sethighlightFollowing] = useState(false);
-	// Add state variable to keep track of new items uploaded for selling
 	const [artItems, setArtItems] = useState(null)
 
     useEffect(() => {
@@ -44,8 +41,6 @@ function HomeScreen({navigation}) {
       	setHighlightExlore(false);
   	};  
 
-	// Changes Made: 
-	// 1. Added item prop to <ItemListing>
 	if (artItems){
 		return (
 			<Screen>

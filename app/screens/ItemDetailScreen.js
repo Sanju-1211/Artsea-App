@@ -8,18 +8,14 @@ import {
   Text,
   TouchableHighlight,
 } from "react-native";
-import ItemCard from "../components/ItemCard";
 import Screen from "../components/Screen";
 import AppText from "../components/AppText";
 import AppButton from "../components/AppButton";
-import UserCard from "../components/UserCard";
 import firebase from "firebase/compat";
 import RowView from "../components/RowView";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-
 import { FlatList } from "react-native-gesture-handler";
 import AppIcon from "../components/AppIcon";
-import { useNavigation, useRoute } from "@react-navigation/native";
 
 function toTitleCase(str) {
   return str.replace(/\w\S*/g, function (txt) {
@@ -28,7 +24,6 @@ function toTitleCase(str) {
 }
 
 export default function ItemDetailScreen(props) {
-  // Change Made: Got item from item prop
   let item = props.route.params?.item;
   console.log(`item`, item);
 
@@ -47,7 +42,6 @@ export default function ItemDetailScreen(props) {
   };
 
   // This is an asynchronous function to add an item and it's quantity to the current user's cart.
-  // 'async' indicates that this function can perform asynchronous operations like database calls.
   async function addToCart(item, quantity) {
     console.log("Adding items to cart");
     // Get the current user's ID
@@ -56,32 +50,16 @@ export default function ItemDetailScreen(props) {
     // specifically for our current user.
     const cartRef = firebase.firestore().collection("carts").doc(userId);
 
-    // Let's add a try-catch block to catch any errors if we fail to implement
-    // any of the following steps.
     try {
-      // Here, wer are starting a 'Firestore Transaction'. This just ensures that
-      // either all the operations in the following block will be completed successfully
-      // or none of it will be.
-      // We don't want the cart to be updated multiple times in the same time,
-      // so this just avoids confusion.
       await firebase.firestore().runTransaction(async function (transaction) {
         // Let's try to retrieve the current user's cart document.
         const cartDoc = await transaction.get(cartRef);
 
-        // Check if the card document exists.
         if (cartDoc.exists) {
-          console.log("Cart Document for Current User Exists!");
-          // If the cart document exists, get the current items array
-          // in the user's cart. If there is no data, get an empty array.
-          // Name this updatedItemsInCart as we're going to use this to
-          // update the current cart.
+
           let updatedItemsInCart = cartDoc.data().items || [];
 
           // Check if the item we are adding already exists in the cart.
-          // We will do this by comparing each items's image (that's in the cart)
-          // to the image of the item to be added.
-          // The findIndex will return -1 if the item is not found.
-          // If the item exists, it'll return the index of the item in the array of items.
           const itemIndex = updatedItemsInCart.findIndex(function (i) {
             return i.image === item.image;
           });
@@ -97,25 +75,11 @@ export default function ItemDetailScreen(props) {
             // specified quantity.
             console.log("Current Item is NOT already In Cart. Adding it.");
             updatedItemsInCart.push({
-              // This ... means to "extend an object". Basically if
-              // item = {'a': 1, 'b': 2} and quantity = 5, then:
-              // {...item, quantity} is going to be:
-              // {'a': 1, 'b': 2, quantity: 5}
               ...item,
               quantity,
             });
           }
-
           // Update the cart document with the new items array
-          // This is where we're going to make the change in the
-          // cart document of the current user.
-          // This is beneficial as either all the operations:
-          // - Getting the Cart Document
-          // - Checking if the current Item Exists in The Cart
-          // - Updating the Cart
-          // are ALL executed. If we fail at any, we won't be updating the
-          // firestore document.
-          console.log("Updating the Cart.");
           transaction.update(cartRef, { items: updatedItemsInCart });
         } else {
           // If the cart doesn't exist, create a new cart document for the current user
@@ -126,9 +90,6 @@ export default function ItemDetailScreen(props) {
           transaction.set(cartRef, { items: [{ ...item, quantity }] });
         }
       });
-
-      // Log a message if the item is successfully added to the cart.
-      console.log("Item added to the cart successfully.");
     } catch (error) {
       // If an error occurs during the transaction, log the error message.
       console.error("Failed to add item to cart: ", error);
@@ -142,28 +103,15 @@ export default function ItemDetailScreen(props) {
         contentContinaerStyle={{ flexGrow: 1 }}
       >
         <FlatList
-          // data is the list of items
           data={item.images}
-          // we want a horizontal list of images
           horizontal
-          // we don't want to show the scrolling indicator
           showsHorizontalScrollIndicator={false}
-          // when swiped, center the image, don't leave it in between
           snapToAlignment="center"
-          // how fast should the image snap to center?
           decelerationRate="normal"
           pagingEnabled
-          // a unique key for each item in the array of images
-          // in this case, the image itself is a unique id
-          // so we just return the item
           keyExtractor={function (item) {
             return item;
           }}
-          // The render item function is what describes how each item
-          // will be displayed in the list.
-          // The render item function within a flat list receives an object
-          // with multiple values by default.
-          // But we just want to focus on the item it currently needs to focus on.
           renderItem={function ({ item }) {
             return (
               <View
@@ -187,14 +135,6 @@ export default function ItemDetailScreen(props) {
           }}
           snapToInterval={useWindowDimensions().width - 50}
         />
-
-        {/* Removing Original ItemCard */}
-        {/* <ItemCard
-                title = {item.item_name}
-                image = {item.image}
-                subTitle = {item.description}
-                imageStyle = {styles.imageStyle}
-            /> */}
 
         {/* Section: Title, Rating and Origin of Item */}
         <View style={styles.section}>
@@ -362,12 +302,10 @@ export default function ItemDetailScreen(props) {
                 data={item.reviews}
                 horizontal
                 keyExtractor={function (review) {
-                  // console.log(`review in key extractor: ${JSON.stringify(review)}`)
                   return `${review.buyer_name}:${review.reviewText}`;
                 }}
                 showsHorizontalScrollIndicator={false}
                 renderItem={function ({ item: review }) {
-                  // console.log(`review: ${JSON.stringify(review)}`)
                   return (
                     <View
                       style={{

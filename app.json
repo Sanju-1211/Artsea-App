@@ -23,10 +23,20 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.artsea",
-      "versionCode": 1
+      "versionCode": 1,
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBpSWZXFj4V7E3GYR1eg4kUOKOghdAzgL8"
+        }
+      }      
     },
     "web": {
       "favicon": "./app/assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "22cae722-131a-4e0c-b33b-b5e760f6f2c0"
+      }
     }
   }
 }

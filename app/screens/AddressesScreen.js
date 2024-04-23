@@ -6,7 +6,6 @@ import Screen from "../components/Screen";
 import AppText from "../components/AppText";
 import RowView from "../components/RowView";
 import { useNavigation } from "@react-navigation/native";
-import { RadioButton } from "react-native-paper";
 import colors from "../config/colors";
 import firebase from "firebase/compat";
 import AppIcon from "../components/AppIcon";
@@ -30,7 +29,6 @@ const AddressesScreen = (props) => {
             );
           } else {
             console.log("User document doesn't exist");
-            // Handle case where user document doesn't exist
           }
         },
         (error) => {
@@ -110,7 +108,6 @@ const AddressesScreen = (props) => {
         (address) => address !== removedAddress
         );
 
-        //addresses = updatedAddresses;
         setSavedAddresses(updatedAddresses);
 
         transaction.update(userDocRef, { addresses: updatedAddresses });

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Image, ImageBackground, StyleSheet, View } from "react-native";
-import Screen from "../components/Screen";
+import { ImageBackground, StyleSheet, View } from "react-native";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
 import AppButton from "../components/AppButton";
@@ -26,7 +25,6 @@ function LoginScreen(props) {
 
   // Clear the authentication error when the component is mounted.
   useEffect(() => {
-    // console.log("LoginScreen: Clearing Errors on Focus ");
     authContext.authError = "";
   }, []);
 
@@ -37,14 +35,13 @@ function LoginScreen(props) {
 
   // Get access to AuthContext value to use onSignIn function
   return (
-    
-      
+          
       <ImageBackground
             blurRadius={100}
             style={styles.background}
             source={require("../assets/Welcome_Background.jpg")}
-        >
-            <Logo/>
+      >
+      <Logo/>
       {/* Email Text Input */}
       <AppTextInput
         placeholder="Email"
@@ -103,8 +100,6 @@ function LoginScreen(props) {
         </RowView>
       )}
 
-
-
       {/* Footer to Sign Up */}
       <View style={styles.footer}>
         <RowView >
@@ -124,7 +119,6 @@ function LoginScreen(props) {
             style={{ color:colors.white ,borderBottomWidth:1,borderBottomColor:colors.white}}
             
             onPress={() => {
-              //props.navigation.navigate("");
               authContext.onPasswordResetRequest(email, props.navigation);
             }}
           >
@@ -139,15 +133,6 @@ function LoginScreen(props) {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   // Size
-  //   // Layout
-  //   alignItems: "center",
-  //   margin: 0, 
-  //   padding: 0
-  //   // Boundaries
-  //   // Fill
-  // },
   background: {
         flex: 1,
         width: "100%",

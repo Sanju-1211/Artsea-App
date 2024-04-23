@@ -3,12 +3,8 @@ import { StyleSheet, View, TouchableOpacity, Image, ImageBackground} from "react
 import Screen from "../components/Screen";
 import colors from "../config/colors";
 import AppText from "../components/AppText";
-import { Feather } from '@expo/vector-icons';
 import ItemListing from "../components/ItemListing";
-import Following from "../components/Following";
-// Import firebase 
 import firebase from "firebase/compat"
-import Loading from "../components/Loading";
 
 function WishListScreen({navigation}) {
 
@@ -40,7 +36,6 @@ function WishListScreen({navigation}) {
             <View style={styles.separator}></View>
             {wishList.items?.length > 0?
             (
-
             <View style={{marginBottom:100, flexDirection:"row"}}>
                 <ItemListing 
                     navigation={navigation} 
@@ -49,9 +44,7 @@ function WishListScreen({navigation}) {
                     listStyle={styles.listStyle}
                     items={wishList.items}/>
             </View>
-            
             )
-
             :
             (
             <View style={styles.noOrder}>
@@ -65,7 +58,6 @@ function WishListScreen({navigation}) {
     else {
 		return(
 			<Screen >
-      
             <View >
                 <AppText style={styles.headerStyle}>My Wishlist</AppText>
             </View>

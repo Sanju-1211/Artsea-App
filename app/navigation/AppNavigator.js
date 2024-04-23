@@ -6,13 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Ionicons , Entypo} from '@expo/vector-icons';
 import colors from '../config/colors';
 import HomeScreenNavigator from './HomeScreenNavigator';
-import AddItemScreenNavigator from './AddItemScreenNavigator';
 import CheckoutScreenNavigator from './CheckoutScreenNavigator';
-import OrderScreenNavigator from './OrderScreenNavigator';
-import SellerProfileScreenNavigator from './SellerProfileScreenNavigator';
 import BuyerProfileScreenNavigator from './BuyerProfileScreenNavigator';
-import { AntDesign } from '@expo/vector-icons';
-import { FontAwesome } from '@expo/vector-icons';
 import WishListScreenNavigator from './WishListScreenNavigator';
 
 const Tab = createBottomTabNavigator();

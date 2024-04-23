@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Image, ImageBackground, StyleSheet, Switch, View } from "react-native";
-import Screen from "../components/Screen";
+import { ImageBackground, StyleSheet, View } from "react-native";
 import AppText from "../components/AppText";
 import AppTextInput from "../components/AppTextInput";
 import AppButton from "../components/AppButton";
@@ -10,7 +9,6 @@ import colors from "../config/colors";
 import { AuthContext } from "../services/auth/AuthContext";
 import { useFocusEffect } from "@react-navigation/native";
 import Logo from "../components/Logo";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 
 function RegisterScreen(props) {
   const [email, setEmail] = useState("");
@@ -35,7 +33,6 @@ function RegisterScreen(props) {
 
   // Clear the authentication error when the component is mounted.
   useEffect(() => {
-    // console.log("RegisterScreen: Clearing Errors on Focus ");
     authContext.authError = "";
   }, []);
 
@@ -50,8 +47,8 @@ function RegisterScreen(props) {
             blurRadius={100}
             style={styles.background}
             source={require("../assets/Welcome_Background.jpg")}
-        >
-            <Logo/>
+      >
+      <Logo/>
 
       {/* Full Name Text Input */}
       <AppTextInput
@@ -129,8 +126,6 @@ function RegisterScreen(props) {
 
       {/* Footer to Log In */}
       <View style={styles.footer}>
-    
-          
           <AppText
             type="largeBold"
             style={{ color: colors.white, borderBottomWidth:1,borderBottomColor:colors.white }}
@@ -140,7 +135,6 @@ function RegisterScreen(props) {
           >
             Login
           </AppText>
-        
       </View>
       </ImageBackground>
   );
@@ -148,11 +142,7 @@ function RegisterScreen(props) {
 
 const styles = StyleSheet.create({
   container: {
-    // Size
-    // Layout
     alignItems: "center",
-    // Boundaries
-    // Fill
   },
   background: {
     flex: 1,
@@ -190,8 +180,6 @@ const styles = StyleSheet.create({
     // Border
     borderTopColor: colors.lightgrey,
     borderWidth: 1,
-
-    // Fill
   },
 });
 

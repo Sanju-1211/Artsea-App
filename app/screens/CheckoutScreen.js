@@ -3,22 +3,13 @@ import { View, FlatList, StyleSheet, Alert } from "react-native";
 import CartItem from "../components/CartItem";
 import firebase from "firebase/compat";
 import AppButton from "../components/AppButton";
-import AddressForm from "../components/AddressForm";
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
 import { ScrollView } from "react-native-gesture-handler";
-import { StripeProvider, usePaymentSheet } from "@stripe/stripe-react-native";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import Loading from "../components/Loading";
 import RowView from "../components/RowView";
 import colors from "../config/colors";
-
-
-// STRIPE
-// const API_URL = "http://192.168.1.4:3000";
-// // const PUBLISHABLE_KEY =
-// //   "pk_test_51MY8orSJTJQgHNK3rd2vWgnaOUuCxL1kDycYjfiS0rDECssrhOyVyrQZJ6u3G0bAW9AqdHnzWKIErdTyU8FKmyJN00b2iCtrnI";
-// const PUBLISHABLE_KEY = "pk_live_51MY8orSJTJQgHNK3doioI6IIGFnZI2SnsDg4ckp89cj9JjBPRGSge5HSgAMPJB5nhUHKAF9hwm115RcJCrn9JFCa0017TczqfA"
 
 const CheckoutScreen = () => {
   const [cartItems, setCartItems] = useState(null);
@@ -28,72 +19,6 @@ const CheckoutScreen = () => {
   const [currentAddress, setCurrentAddress] = useState(null);
   console.log(`currentAddress: ${currentAddress}`);
   const navigation = useNavigation();
-
-  // Stripe
-  // const [ready, setReady] = useState(false);
-  // const { initPaymentSheet, presentPaymentSheet, loading } = usePaymentSheet();
-  // async function fetchPaymentSheetParams() {
-  //   const response = await fetch(`${API_URL}/create-payment-intent`, {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       totalPrice: cartTotal,
-  //     }),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   });
-
-  //   const { paymentIntent, ephemeralKey, customer } = await response.json();
-
-  //   return {
-  //     paymentIntent,
-  //     ephemeralKey,
-  //     customer,
-  //   };
-  // }
-  // async function initialisePaymentSheet() {
-  //   console.log("Initialising Payment Sheet")
-  //   const { paymentIntent, ephemeralKey, customer, publishableKey } =
-  //     await fetchPaymentSheetParams();
-  //   const paymentSheet = await initPaymentSheet({
-  //     merchantDisplayName: "Artsea, Inc.",
-  //     customerId: customer,
-  //     customerEphemeralKeySecret: ephemeralKey,
-  //     paymentIntentClientSecret: paymentIntent,
-  //     allowsDelayedPaymentMethods: true,
-  //     defaultBillingDetails: {
-  //       name: "Rishabh Chopra",
-  //     },
-  //     googlePay:{
-  //       merchantCountryCode:"IN",
-  //       testEnv:true,
-  //       currencyCode:"inr"
-  //     },
-  //     returnURL:"stripe-example://stripe-redirect",
-  //   });
-  //   if (paymentSheet.error) {
-  //     Alert.alert(`Error code: ${error.code}, ${error.message}`);
-  //   } else {
-  //     console.log("Payment Sheet Initialised");
-  //     setReady(true);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   initialisePaymentSheet();
-  // }, [cartTotal]);
-
-  // async function openPaymentSheet() {
-  //   console.log("Open Payment Sheet");
-  //   const { error } = await presentPaymentSheet();
-
-  //   if (error) {
-  //     Alert.alert(`Error code: ${error.code}`, error.message);
-  //   } else {
-  //     Alert.alert("Success", "Your reservation is confirmed!");
-  //     setReady(false);
-  //   }
-  // }
 
   useEffect(() => {
     const user = firebase.auth().currentUser;
@@ -276,14 +201,9 @@ const CheckoutScreen = () => {
         (doc) => {
           if (doc.exists) {
             const userData = doc.data();
-            const addresses = userData.addresses || []; // assuming 'addresses' is an array property of the user document
-            // Do something with the addresses, like setting state
+            const addresses = userData.addresses || []; 
             console.log(addresses);
             setSavedAddresses(addresses);
-            /*setCurrentAddress(
-              addresses.find((address) => address.selected === true)
-            );
-            console.log(`currentAddress: ${JSON.stringify(currentAddress)}`);*/
           } else {
             console.log("User document doesn't exist");
             // Handle case where user document doesn't exist
@@ -320,11 +240,8 @@ const CheckoutScreen = () => {
     );
     console.log(`cartItems is not null: ${JSON.stringify(cartItems)}`);
     return (
-      // <StripeProvider publishableKey={PUBLISHABLE_KEY}>
       <Screen style={styles.container}>
         <ScrollView style={styles.container} contentContinaerStyle={{flexGrow: 1}} showsVerticalScrollIndicator={false}>
-          {/* <AppText>Ready: {JSON.stringify(ready)}</AppText> */}
-          {/* <AddressForm onSave={saveAddressToFirestore} /> */}
           <View style={styles.section}>
             {savedAddresses.length > 0 && currentAddress.name!=null ? (
               <RowView style={{ justifyContent: "space-between" }}>
@@ -444,7 +361,6 @@ const CheckoutScreen = () => {
           }
         </ScrollView>
       </Screen>
-      // </StripeProvider>
     );
   } else {
     <Loading />;

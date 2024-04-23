@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, useWindowDimensions, Image } from "react-native";
 import AppText from "../components/AppText";
 import Screen from "../components/Screen";
-import UserCard from "../components/UserCard";
 import colors from "../config/colors";
 import firebase from "firebase/compat";
 import Loading from "../components/Loading";
@@ -11,8 +10,6 @@ import { AuthContext } from "../services/auth/AuthContext";
 import { FlatList } from "react-native-gesture-handler";
 import OrderItem from "../components/OrderItem";
 import RowView from "../components/RowView";
-import AppIcon from "../components/AppIcon";
-import { Avatar } from "react-native-paper";
 import { Ionicons , Entypo} from '@expo/vector-icons';
 
 function BuyerProfileScreen() {
@@ -50,19 +47,16 @@ function BuyerProfileScreen() {
     const user = firebase.auth().currentUser;
     if (user) {
       const ordersRef = firebase.firestore().collection("orders").doc(user.uid);
-      // Listen for real-time updates with .onSnapshot()
       const unsubscribe = ordersRef.onSnapshot(
         (doc) => {
           if (doc.exists) {
             console.log("Got the orders document");
             let allOrders = doc.data()["orders"];
-            // Assuming each order has a 'createdAt' timestamp field
-            // Order all orders by recency
             allOrders = allOrders.sort((a, b) => b.createdAt - a.createdAt);
             setOrders(allOrders);
             const allItemsWithStatus = allOrders.flatMap((order) =>
               order.items.map((item) => ({
-                ...item, // Spread operator to copy all properties of the item
+                ...item, 
                 status: order.status, // Add the status property from the order
                 arrivingBy: order.arrivingBy,
               }))
